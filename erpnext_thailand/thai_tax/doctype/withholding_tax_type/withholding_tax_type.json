@@ -1,77 +1,100 @@
 {
- "actions": [],
- "allow_rename": 1,
- "autoname": "field:title",
- "creation": "2023-03-04 12:08:38.271210",
- "default_view": "List",
- "doctype": "DocType",
- "editable_grid": 1,
- "engine": "InnoDB",
- "field_order": [
-  "title",
-  "percent",
-  "account"
- ],
- "fields": [
-  {
-   "fieldname": "title",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Title",
-   "mandatory_depends_on": "eval:doc.title == 'Auto'",
-   "reqd": 1,
-   "unique": 1
-  },
-  {
-   "description": "% of withholding tax",
-   "fieldname": "percent",
-   "fieldtype": "Int",
-   "in_list_view": 1,
-   "label": "Percent",
-   "reqd": 1
-  },
-  {
-   "fieldname": "account",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Account",
-   "options": "Account",
-   "reqd": 1
-  }
- ],
- "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2024-10-10 15:27:17.778852",
- "modified_by": "Administrator",
- "module": "Thai Tax",
- "name": "Withholding Tax Type",
- "naming_rule": "By fieldname",
- "owner": "Administrator",
- "permissions": [
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "System Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Accounts User",
-   "share": 1
-  }
- ],
- "sort_field": "title",
- "sort_order": "DESC",
- "states": [],
- "title_field": "title"
+    "actions": [],
+    "allow_rename": 1,
+    "autoname": "field:title",
+    "creation": "2023-03-04 12:08:38.271210",
+    "default_view": "List",
+    "doctype": "DocType",
+    "editable_grid": 1,
+    "engine": "InnoDB",
+    "field_order": [
+     "title",
+     "percent",
+     "column_break_rmmx",
+     "for_payment_type",
+     "section_break_uxli",
+     "accounts"
+    ],
+    "fields": [
+     {
+      "fieldname": "title",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Title",
+      "mandatory_depends_on": "eval:doc.title == 'Auto'",
+      "reqd": 1,
+      "unique": 1
+     },
+     {
+      "description": "% of withholding tax",
+      "fieldname": "percent",
+      "fieldtype": "Int",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Percent",
+      "reqd": 1
+     },
+     {
+      "fieldname": "column_break_rmmx",
+      "fieldtype": "Column Break"
+     },
+     {
+      "default": "Pay and Receive",
+      "fieldname": "for_payment_type",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "For Payment Type",
+      "options": "Pay and Receive\nPay\nReceive",
+      "reqd": 1
+     },
+     {
+      "fieldname": "section_break_uxli",
+      "fieldtype": "Section Break",
+      "label": "Withholding Tax Account"
+     },
+     {
+      "fieldname": "accounts",
+      "fieldtype": "Table",
+      "label": "Accounts",
+      "options": "Withholding Tax Type Account",
+      "reqd": 1
+     }
+    ],
+    "index_web_pages_for_search": 1,
+    "links": [],
+    "modified": "2024-10-28 14:45:52.531273",
+    "modified_by": "Administrator",
+    "module": "Thai Tax",
+    "name": "Withholding Tax Type",
+    "naming_rule": "By fieldname",
+    "owner": "Administrator",
+    "permissions": [
+     {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+     },
+     {
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Accounts User",
+      "share": 1
+     }
+    ],
+    "sort_field": "title",
+    "sort_order": "DESC",
+    "states": [],
+    "title_field": "title"
 }

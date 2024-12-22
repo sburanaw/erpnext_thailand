@@ -4,9 +4,26 @@ app_name = "erpnext_thailand"
 app_title = "ERPNext Thailand"
 app_publisher = "Ecosoft"
 app_description = "Thailand Localization"
-app_email = "kittiu@gmail.com"
+app_email = "kittiu@ecosoft.co.th"
 app_license = "MIT"
 required_apps = ["erpnext"]
+
+fixtures = [
+	{
+		"doctype": "Withholding Tax Type Of Income",
+		"filters": [
+			[
+				"name",
+				"in",
+				(
+        			"1", "2", "3", "4", "4.1.1", "4.1.2", "4.1.3", "4.1.4",
+        			"4.2.1", "4.2.2", "4.2.3", "4.2.4", "4.2.5", "5", "6",
+				)
+			]
+		],
+	}
+]
+
 
 # Includes in <head>
 # ------------------
@@ -38,7 +55,6 @@ doctype_js = {
 	"Expense Claim": "public/js/expense_claim.js",
 	"Purchase Tax Invoice": "public/js/purchase_tax_invoice.js",
 	"Sales Tax Invoice": "public/js/sales_tax_invoice.js",
-	"Withholding Tax Cert": "public/js/withholding_tax_cert.js",
 	"Address": "public/js/address.js",
 }
 
