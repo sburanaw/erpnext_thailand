@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include erpnext_thailand *.css
+recursive-include erpnext_thailand *.csv
+recursive-include erpnext_thailand *.html
+recursive-include erpnext_thailand *.ico
+recursive-include erpnext_thailand *.js
+recursive-include erpnext_thailand *.json
+recursive-include erpnext_thailand *.md
+recursive-include erpnext_thailand *.png
+recursive-include erpnext_thailand *.py
+recursive-include erpnext_thailand *.svg
+recursive-include erpnext_thailand *.txt
+recursive-exclude erpnext_thailand *.pyc

@@ -1,25 +1,12 @@
+from . import __version__ as app_version
+
 app_name = "erpnext_thailand"
 app_title = "ERPNext Thailand"
 app_publisher = "Ecosoft"
 app_description = "Thailand Localization"
-app_email = "kittiu@ecosoft.co.th"
-app_license = "mit"
-
-# Apps
-# ------------------
-
-# required_apps = []
-
-# Each item in the list will be shown as an app in the apps page
-# add_to_apps_screen = [
-# 	{
-# 		"name": "erpnext_thailand",
-# 		"logo": "/assets/erpnext_thailand/logo.png",
-# 		"title": "ERPNext Thailand",
-# 		"route": "/erpnext_thailand",
-# 		"has_permission": "erpnext_thailand.api.permission.has_app_permission"
-# 	}
-# ]
+app_email = "kittiu@gmail.com"
+app_license = "MIT"
+required_apps = ["erpnext"]
 
 # Includes in <head>
 # ------------------
@@ -44,14 +31,21 @@ app_license = "mit"
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
+
+doctype_js = {
+	"Journal Entry": "public/js/journal_entry.js",
+	"Payment Entry": "public/js/payment_entry.js",
+	"Expense Claim": "public/js/expense_claim.js",
+	"Purchase Tax Invoice": "public/js/purchase_tax_invoice.js",
+	"Sales Tax Invoice": "public/js/sales_tax_invoice.js",
+	"Withholding Tax Cert": "public/js/withholding_tax_cert.js",
+	"Address": "public/js/address.js",
+}
+
+
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
-
-# Svg Icons
-# ------------------
-# include app icons in desk
-# app_include_icons = "erpnext_thailand/public/icons.svg"
 
 # Home Pages
 # ----------
@@ -61,7 +55,7 @@ app_license = "mit"
 
 # website user home page (by Role)
 # role_home_page = {
-# 	"Role": "home_page"
+#     "Role": "home_page"
 # }
 
 # Generators
@@ -75,37 +69,30 @@ app_license = "mit"
 
 # add methods and filters to jinja environment
 # jinja = {
-# 	"methods": "erpnext_thailand.utils.jinja_methods",
-# 	"filters": "erpnext_thailand.utils.jinja_filters"
+#     "methods": "erpnext_thailand.utils.jinja_methods",
+#     "filters": "erpnext_thailand.utils.jinja_filters"
 # }
+
+jinja = {
+	"methods": [
+		"erpnext_thailand.utils.amount_in_bahttext",
+		"erpnext_thailand.utils.full_thai_date",
+	],
+}
 
 # Installation
 # ------------
 
 # before_install = "erpnext_thailand.install.before_install"
-# after_install = "erpnext_thailand.install.after_install"
+after_install = "erpnext_thailand.install.after_install"
+after_app_install = "erpnext_thailand.install.after_app_install"
 
 # Uninstallation
 # ------------
 
 # before_uninstall = "erpnext_thailand.uninstall.before_uninstall"
 # after_uninstall = "erpnext_thailand.uninstall.after_uninstall"
-
-# Integration Setup
-# ------------------
-# To set up dependencies/integrations with other apps
-# Name of the app being installed is passed as an argument
-
-# before_app_install = "erpnext_thailand.utils.before_app_install"
-# after_app_install = "erpnext_thailand.utils.after_app_install"
-
-# Integration Cleanup
-# -------------------
-# To clean up dependencies/integrations with other apps
-# Name of the app being uninstalled is passed as an argument
-
-# before_app_uninstall = "erpnext_thailand.utils.before_app_uninstall"
-# after_app_uninstall = "erpnext_thailand.utils.after_app_uninstall"
+before_app_uninstall = "erpnext_thailand.uninstall.before_app_uninstall"
 
 # Desk Notifications
 # ------------------
@@ -118,52 +105,77 @@ app_license = "mit"
 # Permissions evaluated in scripted ways
 
 # permission_query_conditions = {
-# 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
+#     "Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
 # }
 #
 # has_permission = {
-# 	"Event": "frappe.desk.doctype.event.event.has_permission",
+#     "Event": "frappe.desk.doctype.event.event.has_permission",
 # }
 
 # DocType Class
 # ---------------
 # Override standard doctype classes
-
-# override_doctype_class = {
-# 	"ToDo": "custom_app.overrides.CustomToDo"
-# }
+override_doctype_class = {
+	"Employee Advance": "erpnext_thailand.custom.employee_advance.ThaiTaxEmployeeAdvance",
+}
 
 # Document Events
 # ---------------
 # Hook on document methods and events
 
 # doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
+#     "*": {
+#         "on_update": "method",
+#         "on_cancel": "method",
+#         "on_trash": "method"
+#     }
 # }
+
+doc_events = {
+	"GL Entry": {
+		"after_insert": "erpnext_thailand.custom.custom_api.create_tax_invoice_on_gl_tax",
+	},
+	"Payment Entry": {
+		"validate": "erpnext_thailand.custom.custom_api.validate_company_address",
+		"on_update": "erpnext_thailand.custom.custom_api.clear_invoice_undue_tax",
+        "on_submit": "erpnext_thailand.custom.payment_entry.reconcile_undue_tax",
+	},
+    "Unreconcile Payment": {
+        "on_submit": "erpnext_thailand.custom.unreconcile_payment.unreconcile_undue_tax",
+	},
+	"Purchase Invoice": {
+		"after_insert": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
+		"on_update": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
+	},
+	"Expense Claim": {
+		"after_insert": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
+		"on_update": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
+	},
+	"Journal Entry": {
+		"on_update": "erpnext_thailand.custom.custom_api.prepare_journal_entry_tax_invoice_detail",
+		"on_submit": "erpnext_thailand.custom.journal_entry.reconcile_undue_tax",
+	},
+}
 
 # Scheduled Tasks
 # ---------------
 
 # scheduler_events = {
-# 	"all": [
-# 		"erpnext_thailand.tasks.all"
-# 	],
-# 	"daily": [
-# 		"erpnext_thailand.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"erpnext_thailand.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"erpnext_thailand.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"erpnext_thailand.tasks.monthly"
-# 	],
+#     "all": [
+#         "erpnext_thailand.tasks.all"
+#     ],
+#     "daily": [
+#         "erpnext_thailand.tasks.daily"
+#     ],
+#     "hourly": [
+#         "erpnext_thailand.tasks.hourly"
+#     ],
+#     "weekly": [
+#         "erpnext_thailand.tasks.weekly"
+#     ],
+#     "monthly": [
+#         "erpnext_thailand.tasks.monthly"
+#     ],
 # }
 
 # Testing
@@ -175,16 +187,22 @@ app_license = "mit"
 # ------------------------------
 #
 # override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "erpnext_thailand.event.get_events"
+#     "frappe.desk.doctype.event.event.get_events": "erpnext_thailand.event.get_events"
 # }
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
 # along with any modifications made in other Frappe apps
-# override_doctype_dashboards = {
-# 	"Task": "erpnext_thailand.task.get_dashboard_data"
-# }
 
+override_doctype_dashboards = {
+	"Purchase Invoice": "erpnext_thailand.custom.dashboard_overrides.get_dashboard_data_for_purchase_invoice",
+	"Sales Invoice": "erpnext_thailand.custom.dashboard_overrides.get_dashboard_data_for_sales_invoice",
+	"Expense Claim": "erpnext_thailand.custom.dashboard_overrides.get_dashboard_data_for_expense_claim",
+}
+
+# override_doctype_dashboards = {
+#     "Task": "erpnext_thailand.task.get_dashboard_data"
+# }
 # exempt linked doctypes from being automatically cancelled
 #
 # auto_cancel_exempted_doctypes = ["Auto Repeat"]
@@ -208,37 +226,29 @@ app_license = "mit"
 # --------------------
 
 # user_data_fields = [
-# 	{
-# 		"doctype": "{doctype_1}",
-# 		"filter_by": "{filter_by}",
-# 		"redact_fields": ["{field_1}", "{field_2}"],
-# 		"partial": 1,
-# 	},
-# 	{
-# 		"doctype": "{doctype_2}",
-# 		"filter_by": "{filter_by}",
-# 		"partial": 1,
-# 	},
-# 	{
-# 		"doctype": "{doctype_3}",
-# 		"strict": False,
-# 	},
-# 	{
-# 		"doctype": "{doctype_4}"
-# 	}
+#     {
+#         "doctype": "{doctype_1}",
+#         "filter_by": "{filter_by}",
+#         "redact_fields": ["{field_1}", "{field_2}"],
+#         "partial": 1,
+#     },
+#     {
+#         "doctype": "{doctype_2}",
+#         "filter_by": "{filter_by}",
+#         "partial": 1,
+#     },
+#     {
+#         "doctype": "{doctype_3}",
+#         "strict": False,
+#     },
+#     {
+#         "doctype": "{doctype_4}"
+#     }
 # ]
 
 # Authentication and authorization
 # --------------------------------
 
 # auth_hooks = [
-# 	"erpnext_thailand.auth.validate"
+#     "erpnext_thailand.auth.validate"
 # ]
-
-# Automatically update python controller files with type annotations for this app.
-# export_python_type_annotations = True
-
-# default_log_clearing_doctypes = {
-# 	"Logging DocType Name": 30  # days to retain logs
-# }
-
