@@ -5,8 +5,10 @@ from frappe.custom.doctype.custom_field.custom_field import \
 from frappe.custom.doctype.property_setter.property_setter import \
     make_property_setter
 
-from erpnext_thailand.constants import (ERP_CUSTOM_FIELDS, ERP_PROPERTY_SETTERS,
-                                HRMS_CUSTOM_FIELDS)
+from erpnext_thailand.constants import (
+    ERP_CUSTOM_FIELDS, ERP_PROPERTY_SETTERS,
+    HRMS_CUSTOM_FIELDS, BILLING_CUSTOM_FIELDS
+)
 
 
 def after_install():
@@ -29,6 +31,7 @@ def after_install():
 def make_custom_fields():
 	print("Setup custom fields for erpnext...")
 	create_custom_fields(ERP_CUSTOM_FIELDS, ignore_validate=True)
+	create_custom_fields(BILLING_CUSTOM_FIELDS, ignore_validate=True)
 	if "hrms" in frappe.get_installed_apps():
 		print("Setup custom fields for hrms...")
 		create_custom_fields(HRMS_CUSTOM_FIELDS, ignore_validate=True)

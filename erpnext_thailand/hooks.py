@@ -154,8 +154,14 @@ doc_events = {
 	"Payment Entry": {
 		"validate": "erpnext_thailand.custom.custom_api.validate_company_address",
 		"on_update": "erpnext_thailand.custom.custom_api.clear_invoice_undue_tax",
-        "on_submit": "erpnext_thailand.custom.payment_entry.reconcile_undue_tax",
-	},
+        "on_submit": [
+            "erpnext_thailand.custom.payment_entry.reconcile_undue_tax",
+            "erpnext_thailand.custom.payment_entry.update_sales_billing_outstanding_amount",
+        ],
+        "on_cancel": [
+            "erpnext_thailand.custom.payment_entry.update_sales_billing_outstanding_amount",
+        ],
+ },
     "Unreconcile Payment": {
         "on_submit": "erpnext_thailand.custom.unreconcile_payment.unreconcile_undue_tax",
 	},
