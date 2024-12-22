@@ -1,0 +1,47 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-12-22 16:09:26.346740",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "tax_invoice_accounts_section",
+  "company_accounts"
+ ],
+ "fields": [
+  {
+   "fieldname": "company_accounts",
+   "fieldtype": "Table",
+   "options": "Thai Tax Settings Company"
+  },
+  {
+   "description": "Setup Tax Account for every company",
+   "fieldname": "tax_invoice_accounts_section",
+   "fieldtype": "Section Break",
+   "label": "Tax Invoice Accounts"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-12-22 16:52:22.705507",
+ "modified_by": "Administrator",
+ "module": "Thai Tax",
+ "name": "Thai Tax Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

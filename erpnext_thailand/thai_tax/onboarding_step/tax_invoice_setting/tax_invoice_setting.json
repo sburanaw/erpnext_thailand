@@ -1,7 +1,7 @@
 {
  "action": "Show Form Tour",
  "creation": "2023-06-22 12:59:15.255686",
- "description": "#Tax Invoice Settings\n\nAfter you have created all required tax account, please map them in the settings.",
+ "description": "#Tax Account Settings\n\nAfter you have created all required tax account, please map them in the settings.",
  "docstatus": 0,
  "doctype": "Onboarding Step",
  "field": "sales_tax_account",
@@ -13,7 +13,7 @@
  "modified_by": "Administrator",
  "name": "Tax Invoice Setting",
  "owner": "Administrator",
- "reference_document": "Tax Invoice Settings",
+ "reference_document": "Thai Tax Settings",
  "show_form_tour": 0,
  "show_full_form": 0,
  "title": "Tax Invoice Setting",

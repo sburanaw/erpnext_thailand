@@ -49,7 +49,7 @@ $ bench install-app erpnext_thailand
 1. In chart of account, make sure to have with Rate, i.e, 7% for Thailand Tax (Tax)
     - Sales Tax, Undue Sales Tax
     - Purchase Tax, Undue Purchase Tax
-2. Open Tax Invoice Settings, and setup above taxes
+2. Open Thai Tax Settings, and setup above taxes
 3. Setup Sales / Purchase Taxes and Charges Template, we just want to make sure that,
     - When buy/sell product, Sales/Purchase Tax is record on invoice
     - When buy/sell service, Undue Sales/Purchase Tax is record on invoice, then on payment, clear Undue Tax and record Tax

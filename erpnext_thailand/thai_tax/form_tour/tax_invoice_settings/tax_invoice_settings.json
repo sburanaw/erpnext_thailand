@@ -10,10 +10,10 @@
  "modified": "2023-06-22 13:35:18.914103",
  "modified_by": "Administrator",
  "module": "Thai Tax",
- "name": "Tax Invoice Settings",
+ "name": "Thai Tax Settings",
  "new_document_form": 0,
  "owner": "Administrator",
- "reference_doctype": "Tax Invoice Settings",
+ "reference_doctype": "Thai Tax Settings",
  "report_name": "",
  "save_on_complete": 0,
  "steps": [
@@ -103,7 +103,7 @@
    "ui_tour": 0
   }
  ],
- "title": "Tax Invoice Settings",
+ "title": "Thai Tax Settings",
  "track_steps": 0,
  "ui_tour": 0,
  "view_name": "Workspaces"

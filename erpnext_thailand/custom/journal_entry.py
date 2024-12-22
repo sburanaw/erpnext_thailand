@@ -7,4 +7,4 @@ def reconcile_undue_tax(jv, method):
 	if jv.for_payment:
 		pay = frappe.get_doc("Payment Entry", jv.for_payment)
 		vouchers = [jv.name, pay.name] + [r.reference_name for r in pay.references]
-		reconcile_undue_tax_gls(vouchers)
+		reconcile_undue_tax_gls(vouchers, pay.company)

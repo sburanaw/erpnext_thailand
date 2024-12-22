@@ -7,11 +7,22 @@ from frappe.utils import flt
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
+def get_thai_tax_settings(company):
+    settings = frappe.get_single("Thai Tax Settings")
+    accounts = list(filter(lambda x: x.company == company, settings.company_accounts))
+    if not accounts:
+        frappe.throw(_("Please set up {0} for company {1}").format(
+			frappe.utils.get_link_to_form("Thai Tax Settings", "Thai Tax Settings"),
+   			company, 
+		))
+    return accounts[0]
+
+
 def create_tax_invoice_on_gl_tax(doc, method):
 	if doc.flags.from_repost:
 		return
 	# Auto create Tax Invoice only when account equal to tax account.
-	setting = frappe.get_doc("Tax Invoice Settings")
+	setting = get_thai_tax_settings(doc.company)
 	doctype = False
 	tax_amount = 0.0
 	voucher = frappe.get_doc(doc.voucher_type, doc.voucher_no)
@@ -170,9 +181,8 @@ def validate_company_address(doc, method):
 
 def validate_tax_invoice(doc, method):
 	# If taxes contain tax account, tax invoice is required.
-	tax_account = frappe.db.get_single_value(
-		"Tax Invoice Settings", "purchase_tax_account"
-	)
+	setting = get_thai_tax_settings(doc.company)
+	tax_account = setting.purchase_tax_account
 	voucher = frappe.get_doc(doc.doctype, doc.name)
 	has_vat = False
 	for tax in voucher.taxes:
@@ -206,8 +216,8 @@ def is_tax_invoice_exists(dt, dn):
 
 @frappe.whitelist()
 def make_clear_vat_journal_entry(dt, dn):
-	tax = frappe.get_single("Tax Invoice Settings")
 	doc = frappe.get_doc(dt, dn)
+	tax = get_thai_tax_settings(doc.company)
 	je = frappe.new_doc("Journal Entry")
 	je.entry_type = "Journal Entry"
 	je.supplier = doc.party_type == "Supplier" and doc.party or False
@@ -272,7 +282,7 @@ def clear_invoice_undue_tax(doc, method):
 	):
 		return
 	doc.taxes = []
-	tax = frappe.get_single("Tax Invoice Settings")
+	tax = get_thai_tax_settings(doc.company)
 	base_total = 0
 	tax_total = 0
 	references = filter(
@@ -409,7 +419,7 @@ def is_tax_reset(doc, tax_accounts):
 
 
 def prepare_journal_entry_tax_invoice_detail(doc, method):
-	setting = frappe.get_doc("Tax Invoice Settings")
+	setting = get_thai_tax_settings(doc.company)
 	tax_accounts = [setting.sales_tax_account, setting.purchase_tax_account]
 	precision = get_field_precision(
 		frappe.get_meta("Journal Entry Tax Invoice Detail").get_field("tax_base_amount")
