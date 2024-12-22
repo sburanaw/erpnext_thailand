@@ -1,3 +1,2 @@
-ERPNext Thailand
 Thai Tax
 Thai Billing
