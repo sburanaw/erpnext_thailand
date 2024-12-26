@@ -26,11 +26,11 @@ def test_require_withholding_tax(doc):
 @frappe.whitelist()
 def get_withholding_tax_from_type(filters, doc):
 	filters = literal_eval(filters)
-	pay = json.loads(doc)
+	pay = frappe._dict(json.loads(doc))
 	wht = frappe.get_doc("Withholding Tax Type", filters["wht_type"])
-	company = frappe.get_doc("Company", pay["company"])
+	company = frappe.get_doc("Company", pay.company)
 	base_amount = 0
-	for ref in pay.get("references"):
+	for ref in pay.references:
 		if ref.get("reference_doctype") not in [
 			"Sales Invoice",
 			"Purchase Invoice",
@@ -63,10 +63,10 @@ def get_withholding_tax_from_type(filters, doc):
 				base_amount += alloc_percent * (credit - debit)
 	if not base_amount:
 		frappe.throw(_("There is nothing to withhold tax for"))
-	sign = -1 if pay.get("party_type") == "Receive" else 1
+	sign = -1 if pay.party_type == "Receive" else 1
 	return {
 		"withholding_tax_type": wht.name,
-		"account": wht.account,
+		"account": wht.get_account(pay.company),
 		"cost_center": company.cost_center,
 		"base": base_amount * sign,
 		"rate": wht.percent,
@@ -76,8 +76,8 @@ def get_withholding_tax_from_type(filters, doc):
 
 @frappe.whitelist()
 def get_withholding_tax_from_docs_items(doc):
-	pay = json.loads(doc)
-	company = frappe.get_doc("Company", pay["company"])
+	pay = frappe._dict(json.loads(doc))
+	company = frappe.get_doc("Company", pay.company)
 	result = []
 	wht_types = frappe.get_all(
 		"Withholding Tax Type",
@@ -85,13 +85,13 @@ def get_withholding_tax_from_docs_items(doc):
 		as_list=True,
 	)
 	wht_rates = frappe._dict({x[0]: {"percent": x[1], "account": x[2]} for x in wht_types})
-	for ref in pay.get("references"):
+	for ref in pay.references:
 		# For Purchase Invoice, Sales Invoice
 		ref_doctype = ref.get("reference_doctype")
 		if ref_doctype in ["Purchase Invoice", "Sales Invoice"]:
 			if not ref.get("allocated_amount") or not ref.get("total_amount"):
 				continue
-			sign = -1 if pay.get("payment_type") == "Pay" else 1
+			sign = -1 if pay.payment_type == "Pay" else 1
 			ref_doc = frappe.get_doc(ref_doctype, ref.get("reference_name"))
 			for item in ref_doc.items:
 				wht_type = get_wht_type(ref_doctype, pay, item)
@@ -120,13 +120,13 @@ def get_wht_type(ref_doctype, pay, item):
 	item = frappe.get_doc("Item", item)
 	wht_type = None
 	if ref_doctype == "Purchase Invoice":
-		supplier = frappe.get_cached_doc("Supplier", pay.get("party"))
+		supplier = frappe.get_cached_doc("Supplier", pay.party)
 		if supplier.supplier_type == "Individual":
 			wht_type = item.withholding_tax_type_pay_individual
 		else:
 			wht_type = item.withholding_tax_type_pay_supplier
 	if ref_doctype == "Sales Invoice":
-		wht_type = item.custom_withholding_tax_type	
+		wht_type = item.withholding_tax_type	
 	return wht_type
 
 

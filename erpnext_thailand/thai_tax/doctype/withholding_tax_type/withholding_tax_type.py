@@ -8,10 +8,7 @@ from frappe.utils import cint, cstr
 
 
 class WithholdingTaxType(Document):
-	def on_trash(self):
-		if (
-			self.name == "Auto"
-			and not cint(getattr(frappe.local.conf, "developer_mode", 0))
-			and not (frappe.flags.in_migrate or frappe.flags.in_patch)
-		):
-			frappe.throw(_("You are not allowed to delete Auto"))
+
+	def get_account(self, company):
+		account = list(filter(lambda x: x.company == company, self.accounts))
+		return account and account[0].account or None

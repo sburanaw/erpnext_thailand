@@ -196,6 +196,20 @@ ERP_CUSTOM_FIELDS = {
 			"no_copy": 1,
 		},
 	],
+	"Sales Invoice Item": [
+		{
+			"description": "Default Withholding Tax Type setup on Item",
+			"fetch_from": "item_code.withholding_tax_type",
+			"fetch_if_empty": 1,
+			"fieldname": "withholding_tax_type",
+			"fieldtype": "Link",
+			"insert_after": "item_tax_template",
+			"label": "Withholding Tax Type",
+			"options": "Withholding Tax Type",
+			"print_hide": 1,
+			"read_only": 1,
+		},
+	],
 	"Purchase Invoice": [
 		{
 			"fieldname": "tax_invoice",
@@ -227,6 +241,20 @@ ERP_CUSTOM_FIELDS = {
 			"label": "Tax Invoice Date",
 			"no_copy": 1,
 			"read_only_depends_on": "eval:doc.docstatus!=0",
+		},
+	],
+ 	"Purchase Invoice Item": [
+		{
+			"description": "Default Withholding Tax Type setup on Item",
+			"fetch_from": "item_code.withholding_tax_type",
+			"fetch_if_empty": 1,
+			"fieldname": "withholding_tax_type",
+			"fieldtype": "Link",
+			"insert_after": "item_tax_template",
+			"label": "Withholding Tax Type",
+			"options": "Withholding Tax Type",
+			"print_hide": 1,
+			"read_only": 1,
 		},
 	],
 	"Item": [
