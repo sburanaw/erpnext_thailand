@@ -9,14 +9,14 @@ from frappe.query_builder import DocType
 
 class SalesBilling(Document):
 
-	def validate(self):
-		invoices = [i.sales_invoice for i in self.sales_billing_line]
-		if len(invoices) > len(list(set(invoices))):
-			frappe.throw(_("Please do not select same sales invoice more than once!"))
-		total_outstanding_amount = sum([i.outstanding_amount for i in self.sales_billing_line])
-		total_billing_amount = sum([i.grand_total for i in self.sales_billing_line])
-		self.total_outstanding_amount = total_outstanding_amount
-		self.total_billing_amount = total_billing_amount
+    def validate(self):
+        invoices = [i.sales_invoice for i in self.sales_billing_line]
+        if len(invoices) > len(list(set(invoices))):
+            frappe.throw(_("Please do not select same sales invoice more than once!"))
+        total_outstanding_amount = sum([i.outstanding_amount for i in self.sales_billing_line])
+        total_billing_amount = sum([i.grand_total for i in self.sales_billing_line])
+        self.total_outstanding_amount = total_outstanding_amount
+        self.total_billing_amount = total_billing_amount
 
 
 @frappe.whitelist()
@@ -50,6 +50,7 @@ def get_due_billing(customer=None, currency=None, tax_type=None, threshold_type=
         .join(SalesBillingLine)
         .on(SalesBilling.name == SalesBillingLine.parent)
         .where(SalesBilling.docstatus == 1)
+		.where(SalesBilling.closed == 0)
         .select(SalesBillingLine.sales_invoice)
     ).run()
 

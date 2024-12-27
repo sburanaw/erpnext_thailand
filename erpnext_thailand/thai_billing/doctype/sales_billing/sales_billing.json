@@ -10,11 +10,12 @@
  "field_order": [
   "customer",
   "customer_name",
+  "invoice_count",
   "naming_series",
   "column_break_1",
   "company",
   "date",
-  "invoice_count",
+  "closed",
   "filters_section",
   "currency",
   "tax_type",
@@ -170,12 +171,21 @@
    "fieldname": "get_sales_invoices",
    "fieldtype": "Button",
    "label": "Get Sales Invoices"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "description": "Auto closed when all outstanding amount is cleared, or manually set as closed.",
+   "fieldname": "closed",
+   "fieldtype": "Check",
+   "label": "Closed",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-01-31 14:00:03.205886",
+ "modified": "2024-12-27 17:50:35.162274",
  "modified_by": "Administrator",
  "module": "Thai Billing",
  "name": "Sales Billing",

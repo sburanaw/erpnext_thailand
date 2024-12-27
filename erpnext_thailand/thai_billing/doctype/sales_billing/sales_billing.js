@@ -4,6 +4,17 @@
 frappe.ui.form.on("Sales Billing", {
 
     refresh(frm) {
+
+        if (frm.doc.docstatus == 1) {
+            frm.add_custom_button(
+                frm.doc.closed ? __("Force Open") : __("Force Closed"),
+                () => {
+                    frm.set_value("closed", !frm.doc.closed);
+                    frm.save('Update');
+                }
+            )
+        }
+
         frm.fields_dict["sales_billing_line"].grid.get_field("sales_invoice").get_query = function(doc, cdt, cdn) {
             return {
                 filters: {
@@ -59,7 +70,7 @@ frappe.ui.form.on("Sales Billing Line", {
 
 frappe.ui.form.on('Sales Billing', {
     refresh: function (frm) {
-        if (frm.doc.docstatus === 1) {
+        if (frm.doc.docstatus === 1 && frm.doc.closed === 0 && frm.doc.total_outstanding_amount > 0) {
             frm.add_custom_button(__('Create Multi-Payments'), function () {
                 let fields = [
                     {
