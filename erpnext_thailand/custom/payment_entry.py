@@ -199,3 +199,22 @@ def update_sales_billing_outstanding_amount(doc, method):
         total_outstanding_amount += invoice.outstanding_amount
     bill.total_outstanding_amount = total_outstanding_amount
     bill.save()
+
+
+@frappe.whitelist()
+def get_outstanding_reference_documents(args, validate=False):
+	from erpnext.accounts.doctype.payment_entry.payment_entry \
+     	import get_outstanding_reference_documents as erpnext_get_outstanding
+	data = erpnext_get_outstanding(args, validate)
+	# Filter by Sales billing / Purchase Billing
+	args = frappe._dict(json.loads(args))
+	invoices = []
+	if args.sales_billing:
+		sales_billing = frappe.get_doc("Sales Billing", args.sales_billing)
+		invoices = [x.sales_invoice for x in sales_billing.sales_billing_line]
+	elif args.purchase_billing:
+		purchase_billing = frappe.get_doc("Purchase Billing", args.purchase_billing)
+		invoices = [x.purchase_invoice for x in purchase_billing.purchase_billing_line]
+	if invoices:
+		data = filter(lambda x: x.get("voucher_no") in invoices, data)
+	return data
