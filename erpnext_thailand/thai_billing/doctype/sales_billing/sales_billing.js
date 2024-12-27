@@ -151,8 +151,6 @@ frappe.ui.form.on('Sales Billing', {
                     fields: fields,
                     primary_action_label: __('Create Multi-Payments'),
                     primary_action: function (values) {
-                        frappe.flags.allocate_payment_amount = values.allocate_payment_amount;
-
                         let total_paid_amount = values.payment_details.reduce((acc, row) => acc + (row.paid_amount || 0), 0);
                         if (total_paid_amount > values.total_outstanding) {
                             frappe.msgprint(__('Total Paid Amount cannot be greater than Total Outstanding Amount.'));
@@ -163,20 +161,14 @@ frappe.ui.form.on('Sales Billing', {
                             args: {
                                 payment_details: values.payment_details,
                                 sales_billing_name: frm.doc.name,
-                                posting_date: values.posting_date
+                                posting_date: values.posting_date,
+                                allocate_amount: values.allocate_payment_amount
                             },
                             callback: function (r) {
                                 if (!r.exc && r.message) {
-                                    let receipt_names = r.message.payment_receipt_names;
-                            
-                                    if (receipt_names && receipt_names.length > 0) {
-                                        let links = receipt_names.map(name => {
-                                            return `<a href="/app/payment-receipt/${name}" target="_blank">${name}</a>`;
-                                        });
-                                        frappe.msgprint(__('Payment Receipts Created: {0}', [links.join(", ")]));
-                                    } else {
-                                        frappe.msgprint(__('Payment Receipts created successfully, but the names could not be retrieved.'));
-                                    }
+                                    var receipt = r.message.payment_receipt_name
+                                    let link = `<a href="/app/payment-receipt/${receipt}" target="_blank">${receipt}</a>`;
+                                    frappe.msgprint(__('Payment Receipts Created: {0}', [link]));
                                     d.hide(); 
                                 }
                             }
