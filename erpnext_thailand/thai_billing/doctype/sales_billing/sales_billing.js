@@ -4,6 +4,17 @@
 frappe.ui.form.on("Sales Billing", {
 
     refresh(frm) {
+
+        if (frm.doc.docstatus == 1) {
+            frm.add_custom_button(
+                frm.doc.closed ? __("Force Open") : __("Force Closed"),
+                () => {
+                    frm.set_value("closed", !frm.doc.closed);
+                    frm.save('Update');
+                }
+            )
+        }
+
         frm.fields_dict["sales_billing_line"].grid.get_field("sales_invoice").get_query = function(doc, cdt, cdn) {
             return {
                 filters: {
@@ -59,7 +70,7 @@ frappe.ui.form.on("Sales Billing Line", {
 
 frappe.ui.form.on('Sales Billing', {
     refresh: function (frm) {
-        if (frm.doc.docstatus === 1) {
+        if (frm.doc.docstatus === 1 && frm.doc.closed === 0 && frm.doc.total_outstanding_amount > 0) {
             frm.add_custom_button(__('Create Multi-Payments'), function () {
                 let fields = [
                     {
@@ -141,9 +152,10 @@ frappe.ui.form.on('Sales Billing', {
                     { fieldtype: "Section Break" },
                     {
                         fieldtype: "Check",
-                        label: __("Allocate Payment Amount"),
+                        label: __("Auto allocate amount to each payment"),
+                        description: __("<b>Note:</b> If checked, each payment will submitted immediatelly to ensure that amount is allocted properly."),
                         fieldname: "allocate_payment_amount",
-                        default: 1,
+                        default: 0,
                     }
                 );
                 let d = new frappe.ui.Dialog({
@@ -151,32 +163,29 @@ frappe.ui.form.on('Sales Billing', {
                     fields: fields,
                     primary_action_label: __('Create Multi-Payments'),
                     primary_action: function (values) {
-                        frappe.flags.allocate_payment_amount = values.allocate_payment_amount;
-
                         let total_paid_amount = values.payment_details.reduce((acc, row) => acc + (row.paid_amount || 0), 0);
                         if (total_paid_amount > values.total_outstanding) {
                             frappe.msgprint(__('Total Paid Amount cannot be greater than Total Outstanding Amount.'));
                             return; 
                         }
                         frappe.call({
-                            method: "erpnext_thailand.thai_billing.doctype.sales_billing.sales_billing.create_payment_receipt",
+                            method: "erpnext_thailand.thai_billing.doctype.sales_billing.sales_billing.create_multi_payment_entries",
                             args: {
                                 payment_details: values.payment_details,
                                 sales_billing_name: frm.doc.name,
-                                posting_date: values.posting_date
+                                posting_date: values.posting_date,
+                                allocate_amount: values.allocate_payment_amount
                             },
                             callback: function (r) {
                                 if (!r.exc && r.message) {
-                                    let receipt_names = r.message.payment_receipt_names;
-                            
-                                    if (receipt_names && receipt_names.length > 0) {
-                                        let links = receipt_names.map(name => {
-                                            return `<a href="/app/payment-receipt/${name}" target="_blank">${name}</a>`;
-                                        });
-                                        frappe.msgprint(__('Payment Receipts Created: {0}', [links.join(", ")]));
-                                    } else {
-                                        frappe.msgprint(__('Payment Receipts created successfully, but the names could not be retrieved.'));
+                                    var receipt = r.message.payment_receipt_name;
+                                    var payment_entries = r.message.payment_entries;
+                                    if (receipt) {
+                                        let receipt_link = `<a href="/app/payment-receipt/${receipt}" target="_blank">${receipt}</a>`;
+                                        frappe.msgprint(__('Payment Receipt Created: {0}', [receipt_link]));
                                     }
+                                    let payment_entries_links = payment_entries.map(entry => `<a href="/app/payment-entry/${entry}" target="_blank">${entry}</a>`).join(", ");
+                                    frappe.msgprint(__('Payment Entries Created: {0}', [payment_entries_links]));
                                     d.hide(); 
                                 }
                             }

@@ -450,7 +450,9 @@ BILLING_CUSTOM_FIELDS =  {
             "label": "Get Invoices from Sales Billing",
         },
         {
+            "depends_on": 'eval:doc.docstatus == 0 && doc.payment_type == "Receive" && doc.party_type == "Customer" && doc.party',
             "fieldname": "sales_billing",
+            "read_only": 1,
             "fieldtype": "Link",
             "insert_after": "get_invoices_from_sales_billing",
             "label": "Sales Billing",
@@ -469,6 +471,7 @@ BILLING_CUSTOM_FIELDS =  {
             "label": "Get Invoices from Purchase Billing",
         },
         {
+            "depends_on": 'eval:doc.docstatus == 0 && doc.payment_type == "Pay" && doc.party_type == "Supplier" && doc.party',
             "fieldname": "purchase_billing",
             "fieldtype": "Link",
             "read_only": 1,

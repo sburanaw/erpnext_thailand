@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class PaymentReceiptBillingReference(Document):
+class ThaiBillingSettings(Document):
 	pass

@@ -188,14 +188,35 @@ def reconcile_undue_tax_gls(vouchers, company, unreconcile=False):
 
 
 def update_sales_billing_outstanding_amount(doc, method):
-    # Document: Payment Entry
-    total_outstanding_amount = 0
-    if not doc.sales_billing:
-        return
-    bill = frappe.get_doc("Sales Billing", doc.sales_billing)
-    for bill_line in bill.sales_billing_line:
-        invoice = frappe.get_doc("Sales Invoice", bill_line.sales_invoice)
-        bill_line.outstanding_amount = invoice.outstanding_amount
-        total_outstanding_amount += invoice.outstanding_amount
-    bill.total_outstanding_amount = total_outstanding_amount
-    bill.save()
+	# Document: Payment Entry
+	total_outstanding_amount = 0
+	if not doc.sales_billing:
+		return
+	bill = frappe.get_doc("Sales Billing", doc.sales_billing)
+	for bill_line in bill.sales_billing_line:
+		invoice = frappe.get_doc("Sales Invoice", bill_line.sales_invoice)
+		bill_line.outstanding_amount = invoice.outstanding_amount
+		total_outstanding_amount += invoice.outstanding_amount
+	bill.total_outstanding_amount = total_outstanding_amount
+	# Status closed
+	bill.closed = 0 if bill.total_outstanding_amount else 1
+	bill.save()
+
+
+@frappe.whitelist()
+def get_outstanding_reference_documents(args, validate=False):
+	from erpnext.accounts.doctype.payment_entry.payment_entry \
+     	import get_outstanding_reference_documents as erpnext_get_outstanding
+	data = erpnext_get_outstanding(args, validate)
+	# Filter by Sales billing / Purchase Billing
+	args = frappe._dict(json.loads(args))
+	invoices = []
+	if args.sales_billing:
+		sales_billing = frappe.get_doc("Sales Billing", args.sales_billing)
+		invoices = [x.sales_invoice for x in sales_billing.sales_billing_line]
+	elif args.purchase_billing:
+		purchase_billing = frappe.get_doc("Purchase Billing", args.purchase_billing)
+		invoices = [x.purchase_invoice for x in purchase_billing.purchase_billing_line]
+	if invoices:
+		data = filter(lambda x: x.get("voucher_no") in invoices, data)
+	return data
