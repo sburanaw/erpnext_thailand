@@ -220,6 +220,7 @@ override_doctype_dashboards = {
 	"Purchase Invoice": "erpnext_thailand.custom.dashboard_overrides.get_dashboard_data_for_purchase_invoice",
 	"Sales Invoice": "erpnext_thailand.custom.dashboard_overrides.get_dashboard_data_for_sales_invoice",
 	"Expense Claim": "erpnext_thailand.custom.dashboard_overrides.get_dashboard_data_for_expense_claim",
+	"Payment Entry": "erpnext_thailand.custom.dashboard_overrides.get_dashboard_data_for_payment_entry",
 }
 
 # override_doctype_dashboards = {
