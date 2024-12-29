@@ -152,9 +152,10 @@ frappe.ui.form.on('Sales Billing', {
                     { fieldtype: "Section Break" },
                     {
                         fieldtype: "Check",
-                        label: __("Allocate Payment Amount"),
+                        label: __("Auto allocate amount to each payment"),
+                        description: __("<b>Note:</b> If checked, each payment will submitted immediatelly to ensure that amount is allocted properly."),
                         fieldname: "allocate_payment_amount",
-                        default: 1,
+                        default: 0,
                     }
                 );
                 let d = new frappe.ui.Dialog({
@@ -168,7 +169,7 @@ frappe.ui.form.on('Sales Billing', {
                             return; 
                         }
                         frappe.call({
-                            method: "erpnext_thailand.thai_billing.doctype.sales_billing.sales_billing.create_payment_receipt",
+                            method: "erpnext_thailand.thai_billing.doctype.sales_billing.sales_billing.create_multi_payment_entries",
                             args: {
                                 payment_details: values.payment_details,
                                 sales_billing_name: frm.doc.name,
@@ -177,9 +178,14 @@ frappe.ui.form.on('Sales Billing', {
                             },
                             callback: function (r) {
                                 if (!r.exc && r.message) {
-                                    var receipt = r.message.payment_receipt_name
-                                    let link = `<a href="/app/payment-receipt/${receipt}" target="_blank">${receipt}</a>`;
-                                    frappe.msgprint(__('Payment Receipts Created: {0}', [link]));
+                                    var receipt = r.message.payment_receipt_name;
+                                    var payment_entries = r.message.payment_entries;
+                                    if (receipt) {
+                                        let receipt_link = `<a href="/app/payment-receipt/${receipt}" target="_blank">${receipt}</a>`;
+                                        frappe.msgprint(__('Payment Receipt Created: {0}', [receipt_link]));
+                                    }
+                                    let payment_entries_links = payment_entries.map(entry => `<a href="/app/payment-entry/${entry}" target="_blank">${entry}</a>`).join(", ");
+                                    frappe.msgprint(__('Payment Entries Created: {0}', [payment_entries_links]));
                                     d.hide(); 
                                 }
                             }

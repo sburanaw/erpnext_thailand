@@ -1,0 +1,42 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-12-28 14:01:46.624547",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "create_payment_receipt_from_sales_billing"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "description": "From Sales Billing, Create Multi-Payments will also create a Payment Receipt that group Payment Entries.",
+   "fieldname": "create_payment_receipt_from_sales_billing",
+   "fieldtype": "Check",
+   "label": "Create Payment Receipt from Sales Billing"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-12-28 14:17:18.920231",
+ "modified_by": "Administrator",
+ "module": "Thai Billing",
+ "name": "Thai Billing Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
