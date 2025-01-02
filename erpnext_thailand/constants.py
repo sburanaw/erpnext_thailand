@@ -112,7 +112,7 @@ ERP_CUSTOM_FIELDS = {
 			"default": "00000",
 			"fieldname": "branch_code",
 			"fieldtype": "Data",
-			"insert_after": "irs_1099",
+			"insert_after": "tax_id",
 			"label": "Branch Code",
 		}
 	],
