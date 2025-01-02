@@ -1,5 +1,5 @@
 import datetime
-
+import csv
 import frappe
 import zeep
 from frappe import _
@@ -102,3 +102,36 @@ def finalize_address_dict(data):
 		"state": province,
 		"pincode": postal,
 	}
+
+def import_thai_zip_code_data():
+	file_path = f"{frappe.get_app_path('erpnext_thailand')}/public/files/thai_zip_code.csv"
+	with open(file_path, mode="r", encoding="utf-8") as csvfile:
+		reader = csv.DictReader(csvfile)
+		for row in reader:
+			if frappe.db.exists("Thai Zip Code", row["ID"]):
+				continue
+			doc = frappe.get_doc({
+                "doctype": "Thai Zip Code",
+                "name": row["ID"],
+                "zip_code": row["Zip Code"],
+                "tambon": row["Tambon"],
+                "amphur": row["Amphur"],
+                "province": row["Province"],
+            })
+			doc.insert(ignore_permissions=True)
+			frappe.db.commit()
+	return "Import completed successfully."
+
+@frappe.whitelist()
+def get_location_by_zip_code(zip_code):
+	results = []
+	locations = frappe.get_all("Thai Zip Code", filters={"zip_code": zip_code}, fields=["name", "zip_code", "tambon", "amphur", "province"])
+	for loc in locations:
+		results.append({
+			'id': loc['name'],
+			'zip_code': loc['zip_code'],
+			'tambon': loc['tambon'],
+			'amphur': loc['amphur'],
+			'province': loc['province']
+		})
+	return results
