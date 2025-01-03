@@ -4,9 +4,6 @@ from frappe.model.naming import set_name_from_naming_options
 
 def rename_temporarily_named_docs(doctype):
 	"""Rename temporarily named docs using autoname options"""
-	# Load monkey patch only if erpnext_thailand is installed
-	load_patch = "erpnext_thailand" in frappe.get_installed_apps()
-	# --
 	docs_to_rename = frappe.get_all(
 		doctype, {"to_rename": "1"}, order_by="creation", limit=50000
 	)
@@ -20,11 +17,10 @@ def rename_temporarily_named_docs(doctype):
 			auto_commit=True,
 		)
 		# Monkey patch
-		if load_patch:
-			for tax_invoice in ["Sales Tax Invoice", "Purchase Tax Invoice"]:
-				frappe.db.sql(
-					f"UPDATE `tab{tax_invoice}` SET gl_entry = %s where gl_entry = %s",
-					(newname, oldname),
-					auto_commit=True,
-				)
+		for tax_invoice in ["Sales Tax Invoice", "Purchase Tax Invoice"]:
+			frappe.db.sql(
+				f"UPDATE `tab{tax_invoice}` SET gl_entry = %s where gl_entry = %s",
+				(newname, oldname),
+				auto_commit=True,
+			)
 		# --

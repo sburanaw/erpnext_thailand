@@ -8,6 +8,8 @@ app_email = "kittiu@ecosoft.co.th"
 app_license = "MIT"
 required_apps = ["erpnext"]
 
+extend_bootinfo = "erpnext_thailand.startup.boot_session" # Call following boot_session
+
 fixtures = [
 	{
 		"doctype": "Withholding Tax Type Of Income",
