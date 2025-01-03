@@ -30,7 +30,7 @@ When a company purchase service from a supplier, when making payment, it is resp
 - Sales and Purchase Tax Report
 - Withholding Tax on Payment (based on invoice amount before tax) and Withholding Tax Cert (pdf)
 - Withholding Tax Report (PND3, PND53)
-- Get Address by Tax ID
+- Get Address by Tax ID, Zip Code
 
 ## Setup
 
