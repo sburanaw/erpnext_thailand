@@ -386,3 +386,40 @@ def get_party_name(tax_line):
     if tax_line.supplier:
         return frappe.get_doc("Supplier", tax_line.supplier).supplier_name
     return ""
+
+
+# Zero Tax Invoice for Sales Ivoice
+def create_sales_tax_invoice_on_zero_tax(doc, method):
+    """ This method is used for Sales Invoice only """
+    if doc.flags.from_repost:
+        return
+    if doc.doctype != "Sales Invoice":
+        return
+    setting = get_thai_tax_settings(doc.company)
+    if not setting.create_sales_taxinv_on_zero_tax:
+        return
+    doctype = "Sales Tax Invoice"
+    zero_taxes = filter(lambda t: (
+        t.account_head == setting.sales_tax_account
+        and t.tax_amount == 0
+    ), doc.taxes)
+    base_amount = sum(tax.base_total for tax in zero_taxes)  
+    if base_amount:
+        tinv = create_sales_tax_invoice_zero_tax(doc, doctype, base_amount)
+        tinv = update_voucher_tinv(doctype, doc, tinv)
+        tinv.submit()
+
+
+def create_sales_tax_invoice_zero_tax(doc, doctype, base_amount):
+    tinv_dict = {
+        "date": doc.posting_date,
+        "doctype": doctype,
+        "tax_amount": 0,
+        "tax_base": base_amount,
+        "party": doc.customer,
+        "voucher_type": doc.doctype,
+        "voucher_no": doc.name
+    }
+    tinv = frappe.get_doc(tinv_dict)
+    tinv.insert(ignore_permissions=True)
+    return tinv

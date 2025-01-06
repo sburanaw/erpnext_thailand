@@ -163,10 +163,13 @@ doc_events = {
         "on_cancel": [
             "erpnext_thailand.custom.payment_entry.update_sales_billing_outstanding_amount",
         ],
- },
+    },
     "Unreconcile Payment": {
         "on_submit": "erpnext_thailand.custom.unreconcile_payment.unreconcile_undue_tax",
 	},
+    "Sales Invoice": {
+        "on_submit": "erpnext_thailand.custom.custom_api.create_sales_tax_invoice_on_zero_tax",
+    },
 	"Purchase Invoice": {
 		"after_insert": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
 		"on_update": "erpnext_thailand.custom.custom_api.validate_tax_invoice",

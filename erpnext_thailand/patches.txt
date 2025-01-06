@@ -3,3 +3,4 @@
 [post_model_sync]
 execute:from erpnext_thailand.install import after_install; after_install()
 execute:from erpnext_thailand.utils import import_thai_zip_code_data; import_thai_zip_code_data()
+erpnext_thailand.patches.update_sales_tax_invoice_tax_percent

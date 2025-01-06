@@ -60,6 +60,12 @@ def get_columns():
 			"width": 0,
 		},
 		{
+			"label": _("Tax Percent"),
+			"fieldname": "tax_percent",
+			"fieldtype": "Percent",
+			"width": 0,
+		},
+		{
 			"label": _("Ref Voucher Type"),
 			"fieldname": "voucher_type",
 			"fieldtype": "Data",
@@ -102,6 +108,7 @@ def get_data(filters):
 			.when(tinv.docstatus == 1, round(tinv.tax_amount, 2))
 			.else_(0)
 			.as_("tax_amount"),
+            tinv.tax_percent.as_("tax_percent"),
 			tinv.voucher_type.as_("voucher_type"),
 			tinv.voucher_no.as_("voucher_no"),
 		)
@@ -116,6 +123,9 @@ def get_data(filters):
 	if filters.get("filter_based_on") == "Date Range":
 		query = query.where(tinv.report_date >= filters.get("start_date"))
 		query = query.where(tinv.report_date <= filters.get("end_date"))
+
+	if filters.get("tax_percent"):
+		query = query.where(tinv.tax_percent == filters.get("tax_percent"))
 
 	if filters.get("company_tax_address"):
 		query = query.where(tinv.company_tax_address == filters.get("company_tax_address"))

@@ -17,6 +17,7 @@
   "account",
   "tax_base",
   "tax_amount",
+  "tax_percent",
   "column_break_15",
   "voucher_type",
   "voucher_no",
@@ -103,6 +104,7 @@
   },
   {
    "fetch_from": "gl_entry.voucher_type",
+   "fetch_if_empty": 1,
    "fieldname": "voucher_type",
    "fieldtype": "Link",
    "label": "Voucher Type",
@@ -111,6 +113,7 @@
   },
   {
    "fetch_from": "gl_entry.voucher_no",
+   "fetch_if_empty": 1,
    "fieldname": "voucher_no",
    "fieldtype": "Dynamic Link",
    "in_list_view": 1,
@@ -209,11 +212,16 @@
    "options": "Sales Tax Invoice",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "tax_percent",
+   "fieldtype": "Percent",
+   "label": "Tax Percent"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2023-03-04 12:13:55.095080",
+ "modified": "2025-01-06 16:55:31.960482",
  "modified_by": "Administrator",
  "module": "Thai Tax",
  "name": "Sales Tax Invoice",
