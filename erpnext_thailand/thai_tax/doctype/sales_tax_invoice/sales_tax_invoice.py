@@ -3,9 +3,16 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import add_months
+from erpnext_thailand.custom.custom_api import get_thai_tax_settings
 
 
 class SalesTaxInvoice(Document):
+
+	def autoname(self):
+		setting = get_thai_tax_settings(self.company)
+		if setting.use_doc_name_for_sales_taxinv:
+			self.name = self.voucher_no
+
 	def validate(self):
 		self.compute_report_date()
 
