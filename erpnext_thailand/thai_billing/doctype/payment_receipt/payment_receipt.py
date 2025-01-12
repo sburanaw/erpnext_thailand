@@ -18,7 +18,10 @@ class PaymentReceipt(Document):
     def check_payment_references(self):
         if not self.payment_references:
             frappe.throw(_("No Payment References found!"))
-        unsubmitted_references = [pr.name for pr in self.payment_references if pr.docstatus != 1]
+        unsubmitted_references = []
+        for pr in self.payment_references:
+            payment = frappe.get_doc("Payment Entry", pr.payment_entry)
+            if payment.docstatus != 1:unsubmitted_references.append(payment.name)
         if unsubmitted_references:
             frappe.throw(_("Unsubmitted Payment References: {0}").format(", ".join(unsubmitted_references)))
 
