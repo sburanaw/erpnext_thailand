@@ -86,7 +86,6 @@ def parse_naming_series(
 			part = doc.get(e)
 			part = datetime.datetime.strptime(part, "%Y-%m-%d")
 			part = determine_consecutive_week_number(part)
-			x = 1/0
 		# -------------------------
 
 		elif doc and (e.startswith("{") or doc.get(e, _sentinel) is not _sentinel):
