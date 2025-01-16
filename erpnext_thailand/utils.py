@@ -49,6 +49,9 @@ def get_address_by_tax_id(tax_id=False, branch=False):
 			frappe.throw(result[k].get("anyType", None)[0])
 		if result[k] is not None:
 			v = result[k].get("anyType", None)[0]
+			# Remove spaces at the beginning and end of a text
+			if isinstance(v, str):
+				v = v.strip()
 			data.update({k: v})
 	return finalize_address_dict(data)
 
@@ -71,7 +74,7 @@ def finalize_address_dict(data):
 		"vProvince": "จ.",
 	}
 	name = "{} {}".format(data.get("vtitleName"), data.get("vName"))
-	if data.get("vSurname", "-") != "-":
+	if "vSurname" in data and data["vSurname"]:
 		name = "{} {}".format(name, data["vSurname"])
 	house = data.get("vHouseNumber", "")
 	village = get_part(data, "vVillageName", "%s %s")
