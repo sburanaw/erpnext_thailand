@@ -6,6 +6,13 @@ ERP_CUSTOM_FIELDS = {
 			"label": "Default Condition",
 			"description": "Use python expression to set default format, i.e., doc.doctype=='Sales Invoice'",
 			"insert_after": "disabled"
+		},
+		{
+			"fieldname": "hide_if_not_default",
+			"fieldtype": "Check",
+			"label": "Hide if not Default",
+			"description": "If default condition is not met, hide this format form selection",
+			"insert_after": "default_condition"
 		}
 	],
 	"Payment Entry": [

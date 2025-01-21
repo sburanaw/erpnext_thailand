@@ -1,12 +1,12 @@
 frappe.provide("erpnext_thailand.print");
 
-erpnext_thailand.print.print_pdf = function(doctype, docname) {
+erpnext_thailand.print.print_pdf = function(doc) {
 	// Fetch default print formats for the given doctype and docname
 	frappe.call({
 		method: "erpnext_thailand.custom.print_format.get_print_formats",
 		args: {
-			doctype: doctype,
-			docname: docname
+			doctype: doc.doctype,
+			docname: doc.name
 		},
 		callback: function(r) {
 			if (r.message) {
@@ -30,7 +30,7 @@ erpnext_thailand.print.print_pdf = function(doctype, docname) {
 						let print_format = values.print_format;
 						let api = "/api/method/frappe.utils.print_format.download_pdf"
 						// let print_url = `/printview?doctype=${doctype}&name=${docname}&format=${print_format}&no_letterhead=0`;
-						let print_url = `${api}?doctype=${doctype}&name=${docname}&format=${print_format}&letterhead=None&no_letterhead=0&_lang=en&key=None`;
+						let print_url = `${api}?doctype=${doc.doctype}&name=${doc.name}&format=${print_format}&letterhead=None&no_letterhead=0&_lang=en&key=None`;
 						window.open(print_url, "_blank");
 						d.hide();
 					}

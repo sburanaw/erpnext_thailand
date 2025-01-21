@@ -1,12 +1,12 @@
 (() => {
   // ../erpnext_thailand/erpnext_thailand/public/js/print_format.js
   frappe.provide("erpnext_thailand.print");
-  erpnext_thailand.print.print_pdf = function(doctype, docname) {
+  erpnext_thailand.print.print_pdf = function(doc) {
     frappe.call({
       method: "erpnext_thailand.custom.print_format.get_print_formats",
       args: {
-        doctype,
-        docname
+        doctype: doc.doctype,
+        docname: doc.name
       },
       callback: function(r) {
         if (r.message) {
@@ -27,7 +27,7 @@
             primary_action(values) {
               let print_format = values.print_format;
               let api = "/api/method/frappe.utils.print_format.download_pdf";
-              let print_url = `${api}?doctype=${doctype}&name=${docname}&format=${print_format}&letterhead=None&no_letterhead=0&_lang=en&key=None`;
+              let print_url = `${api}?doctype=${doc.doctype}&name=${doc.name}&format=${print_format}&letterhead=None&no_letterhead=0&_lang=en&key=None`;
               window.open(print_url, "_blank");
               d.hide();
             }
@@ -38,4 +38,4 @@
     });
   };
 })();
-//# sourceMappingURL=erpnext_thailand.bundle.UN2QYORM.js.map
+//# sourceMappingURL=erpnext_thailand.bundle.WSX7CLX7.js.map
