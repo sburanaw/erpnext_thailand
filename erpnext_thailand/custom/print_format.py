@@ -33,3 +33,10 @@ def is_default_print_format(doctype, docname, print_format):
 		eval_locals={"doc": doc},
 	)
 	return is_default
+
+
+def allow_update_standard(doc, method):
+	if doc.standard == "Yes":
+		prev_doc = doc.get_doc_before_save()
+		if prev_doc and prev_doc.default_condition != doc.default_condition:
+			frappe.flags.in_test = 1

@@ -183,6 +183,9 @@ doc_events = {
 		"on_update": "erpnext_thailand.custom.custom_api.prepare_journal_entry_tax_invoice_detail",
 		"on_submit": "erpnext_thailand.custom.journal_entry.reconcile_undue_tax",
 	},
+	"Print Format": {
+		"before_validate": "erpnext_thailand.custom.print_format.allow_update_standard",
+	}
 }
 
 # Scheduled Tasks
