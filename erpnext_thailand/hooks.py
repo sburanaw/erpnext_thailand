@@ -33,6 +33,7 @@ fixtures = [
 # include js, css files in header of desk.html
 # app_include_css = "/assets/erpnext_thailand/css/erpnext_thailand.css"
 # app_include_js = "/assets/erpnext_thailand/js/erpnext_thailand.js"
+app_include_js = "erpnext_thailand.bundle.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/erpnext_thailand/css/erpnext_thailand.css"

@@ -1,4 +1,13 @@
 ERP_CUSTOM_FIELDS = {
+	"Print Format": [
+		{
+			"fieldname": "default_condition",
+			"fieldtype": "Data",
+			"label": "Default Condition",
+			"description": "Use python expression to set default format, i.e., doc.doctype=='Sales Invoice'",
+			"insert_after": "disabled"
+		}
+	],
 	"Payment Entry": [
 		{
 			"depends_on": "eval:doc.payment_type=='Pay'",
