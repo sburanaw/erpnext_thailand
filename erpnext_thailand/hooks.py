@@ -8,7 +8,14 @@ app_email = "kittiu@ecosoft.co.th"
 app_license = "MIT"
 required_apps = ["erpnext"]
 
-extend_bootinfo = "erpnext_thailand.startup.boot_session" # Call following boot_session
+
+naming_series_variables = {
+	"YYYY-DATE": "erpnext_thailand.custom.naming.parse_naming_series_variable",
+	"YY-DATE": "erpnext_thailand.custom.naming.parse_naming_series_variable",
+	"MM-DATE": "erpnext_thailand.custom.naming.parse_naming_series_variable",
+	"DD-DATE": "erpnext_thailand.custom.naming.parse_naming_series_variable",
+	"WW-DATE": "erpnext_thailand.custom.naming.parse_naming_series_variable",
+}
 
 fixtures = [
 	{
