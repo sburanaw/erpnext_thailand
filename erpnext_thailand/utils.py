@@ -1,12 +1,10 @@
 import datetime
 import csv
 import frappe
-import zeep
 from frappe import _
 from num2words import num2words
-from requests import Session
-from zeep import Client
-from zeep.transports import Transport
+import requests
+from lxml import etree
 
 
 def amount_in_bahttext(amount):
@@ -26,42 +24,81 @@ def full_thai_date(date_str):
 
 @frappe.whitelist()
 def get_address_by_tax_id(tax_id=False, branch=False):
-	if not (tax_id and branch):
-		frappe.throw(_("Please provide Tax ID and Branch"))
-	try:
+	"""Get address information from Revenue Department Web Service by Tax ID and Branch number.
 
-		session = Session()
+	Args:
+		tax_id (str): Tax ID of the company
+		branch (str): Branch number of the company
+
+	Returns:
+		dict: Dictionary containing address information
+			  Empty dict if there's an error
+
+	Raises:
+		frappe.ValidationError: If tax_id or branch is not provided
+	"""
+	if not (tax_id and branch):
+		frappe.throw(_('Please provide both Tax ID and Branch number'))
+
+	# API Configuration
+	url = "https://rdws.rd.go.th/serviceRD3/vatserviceRD3.asmx"
+	querystring = {"wsdl": ""}
+	headers = {"content-type": "application/soap+xml; charset=utf-8"}
+
+	try:
+		# Convert branch number, default to "0" if not numeric
+		branch_number = int(branch if branch.isnumeric() else "0")
+
+		# Prepare SOAP payload
+		payload = (
+			'<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" '
+			'xmlns:vat="https://rdws.rd.go.th/serviceRD3/vatserviceRD3">'
+			'<soap:Header/>'
+			'<soap:Body>'
+			'<vat:Service>'
+			'<vat:username>anonymous</vat:username>'
+			'<vat:password>anonymous</vat:password>'
+			f'<vat:TIN>{tax_id}</vat:TIN>'
+			'<vat:Name></vat:Name>'
+			'<vat:ProvinceCode>0</vat:ProvinceCode>'
+			f'<vat:BranchNumber>{branch_number}</vat:BranchNumber>'
+			'<vat:AmphurCode>0</vat:AmphurCode>'
+			'</vat:Service>'
+			'</soap:Body>'
+			'</soap:Envelope>'
+		)
+
+		# Setup session with SSL verification disabled
+		session = requests.Session()
 		session.verify = False
-		transport = Transport(session=session)
-		client = Client(
-			"https://rdws.rd.go.th/serviceRD3/vatserviceRD3.asmx", transport=transport
-		)
-		result = client.service.Service(
-			username="anonymous",
-			password="anonymous",
-			TIN=tax_id,
-			ProvinceCode=0,
-			BranchNumber=int(branch.isnumeric() and branch or "0"),
-			AmphurCode=0,
-		)
-		result = zeep.helpers.serialize_object(result)
+
+		# Make the API request
+		response = session.post(url, data=payload, headers=headers, params=querystring)
+		response.raise_for_status()  # Raise exception for HTTP errors
+
+		# Parse XML response
+		result = etree.fromstring(response.content)
+		# Process response data
 		data = {}
-		for k in result.keys():
-			if k == "vmsgerr" and result[k] is not None:
-				frappe.throw(result[k].get("anyType", None)[0])
-			if result[k] is not None:
-				v = result[k].get("anyType", None)[0]
-				# Remove spaces at the beginning and end of a text
-				if isinstance(v, str):
-					v = v.strip()
-				data.update({k: v})
+		value = False
+		for element in result.iter():
+			tag = etree.QName(element).localname
+			if tag == "vmsgerr" and element.text:
+				frappe.throw(_(element.text.strip()))
+			if not value and tag[:1] == "v":
+				value = tag
+				continue
+			if value and tag == "anyType":
+				data[value] = element.text.strip()
+				value = False
 		return finalize_address_dict(data)
 
-	except:
-		frappe.throw(
-			_("Revenue Department Web Service is not available, please try again later.")
-		)
-
+	except requests.exceptions.RequestException as e:
+		frappe.log_error(str(e), _('Revenue Department Web Service Error'))
+		frappe.throw(_('Revenue Department Web Service is not available, please try again later.'))
+	except Exception as e:
+		frappe.log_error(str(e), _('Revenue Department Data Processing Error'))
+		frappe.throw(_('Error processing response from Revenue Department'))
 
 
 def finalize_address_dict(data):
@@ -81,8 +118,8 @@ def finalize_address_dict(data):
 		"vAmphur": "อ.",
 		"vProvince": "จ.",
 	}
-	name = "{} {}".format(data.get("vtitleName"), data.get("vName"))
-	if "vSurname" in data and data["vSurname"]:
+	name = "{} {}".format(data.get("vtin"), data.get("vName"))
+	if "vSurname" in data and data["vSurname"] not in ("-", "", None):
 		name = "{} {}".format(name, data["vSurname"])
 	house = data.get("vHouseNumber", "")
 	village = get_part(data, "vVillageName", "%s %s")
