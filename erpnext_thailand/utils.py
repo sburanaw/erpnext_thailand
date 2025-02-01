@@ -28,32 +28,40 @@ def full_thai_date(date_str):
 def get_address_by_tax_id(tax_id=False, branch=False):
 	if not (tax_id and branch):
 		frappe.throw(_("Please provide Tax ID and Branch"))
-	session = Session()
-	session.verify = False
-	transport = Transport(session=session)
-	client = Client(
-		"https://rdws.rd.go.th/serviceRD3/vatserviceRD3.asmx?wsdl", transport=transport
-	)
-	result = client.service.Service(
-		username="anonymous",
-		password="anonymous",
-		TIN=tax_id,
-		ProvinceCode=0,
-		BranchNumber=int(branch.isnumeric() and branch or "0"),
-		AmphurCode=0,
-	)
-	result = zeep.helpers.serialize_object(result)
-	data = {}
-	for k in result.keys():
-		if k == "vmsgerr" and result[k] is not None:
-			frappe.throw(result[k].get("anyType", None)[0])
-		if result[k] is not None:
-			v = result[k].get("anyType", None)[0]
-			# Remove spaces at the beginning and end of a text
-			if isinstance(v, str):
-				v = v.strip()
-			data.update({k: v})
-	return finalize_address_dict(data)
+	try:
+
+		session = Session()
+		session.verify = False
+		transport = Transport(session=session)
+		client = Client(
+			"https://rdws.rd.go.th/serviceRD3/vatserviceRD3.asmx", transport=transport
+		)
+		result = client.service.Service(
+			username="anonymous",
+			password="anonymous",
+			TIN=tax_id,
+			ProvinceCode=0,
+			BranchNumber=int(branch.isnumeric() and branch or "0"),
+			AmphurCode=0,
+		)
+		result = zeep.helpers.serialize_object(result)
+		data = {}
+		for k in result.keys():
+			if k == "vmsgerr" and result[k] is not None:
+				frappe.throw(result[k].get("anyType", None)[0])
+			if result[k] is not None:
+				v = result[k].get("anyType", None)[0]
+				# Remove spaces at the beginning and end of a text
+				if isinstance(v, str):
+					v = v.strip()
+				data.update({k: v})
+		return finalize_address_dict(data)
+
+	except:
+		frappe.throw(
+			_("Revenue Department Web Service is not available, please try again later.")
+		)
+
 
 
 def finalize_address_dict(data):
