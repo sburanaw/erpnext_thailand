@@ -19,7 +19,7 @@ def full_thai_date(date_str):
 		date.month
 	]
 	thai_year = date.year + 543
-	return "%d %s %d" % (date.day, month_name, thai_year)  # 30 ตุลาคม 2560
+	return f"{date.day} {month_name} {thai_year}"  # 30 ตุลาคม 2560
 
 
 @frappe.whitelist()
@@ -45,63 +45,58 @@ def get_address_by_tax_id(tax_id=False, branch=False):
 	querystring = {"wsdl": ""}
 	headers = {"content-type": "application/soap+xml; charset=utf-8"}
 
-	try:
-		# Convert branch number, default to "0" if not numeric
-		branch_number = int(branch if branch.isnumeric() else "0")
+	# Convert branch number, default to "0" if not numeric
+	branch_number = int(branch if branch.isnumeric() else "0")
 
-		# Prepare SOAP payload
-		payload = (
-			'<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" '
-			'xmlns:vat="https://rdws.rd.go.th/serviceRD3/vatserviceRD3">'
-			'<soap:Header/>'
-			'<soap:Body>'
-			'<vat:Service>'
-			'<vat:username>anonymous</vat:username>'
-			'<vat:password>anonymous</vat:password>'
-			f'<vat:TIN>{tax_id}</vat:TIN>'
-			'<vat:Name></vat:Name>'
-			'<vat:ProvinceCode>0</vat:ProvinceCode>'
-			f'<vat:BranchNumber>{branch_number}</vat:BranchNumber>'
-			'<vat:AmphurCode>0</vat:AmphurCode>'
-			'</vat:Service>'
-			'</soap:Body>'
-			'</soap:Envelope>'
-		)
+	# Prepare SOAP payload
+	payload = (
+		'<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" '
+		'xmlns:vat="https://rdws.rd.go.th/serviceRD3/vatserviceRD3">'
+		'<soap:Header/>'
+		'<soap:Body>'
+		'<vat:Service>'
+		'<vat:username>anonymous</vat:username>'
+		'<vat:password>anonymous</vat:password>'
+		f'<vat:TIN>{tax_id}</vat:TIN>'
+		'<vat:Name></vat:Name>'
+		'<vat:ProvinceCode>0</vat:ProvinceCode>'
+		f'<vat:BranchNumber>{branch_number}</vat:BranchNumber>'
+		'<vat:AmphurCode>0</vat:AmphurCode>'
+		'</vat:Service>'
+		'</soap:Body>'
+		'</soap:Envelope>'
+	)
 
-		# Setup session with SSL verification disabled
-		session = requests.Session()
-		session.verify = False
+	# Setup session with SSL verification disabled
+	session = requests.Session()
+	session.verify = False
 
-		# Make the API request
-		response = session.post(url, data=payload, headers=headers, params=querystring)
-		response.raise_for_status()  # Raise exception for HTTP errors
+	# Make the API request
+	response = session.post(url, data=payload, headers=headers, params=querystring)
+	response.raise_for_status()  # Raise exception for HTTP errors
 
-		# Parse XML response
-		result = etree.fromstring(response.content)
-		# Process response data
-		data = {}
+	# Parse XML response
+	result = etree.fromstring(response.content)
+	# Process response data
+	data = {}
+	value = False
+	for element in result.iter():
+		tag = etree.QName(element).localname
+		if not value and tag[:1] == "v":
+			value = tag
+			continue
+		if value and tag == "anyType":
+			data[value] = element.text.strip()
 		value = False
-		for element in result.iter():
-			tag = etree.QName(element).localname
-			if tag == "vmsgerr" and element.text:
-				frappe.throw(_(element.text.strip()))
-			if not value and tag[:1] == "v":
-				value = tag
-				continue
-			if value and tag == "anyType":
-				data[value] = element.text.strip()
-				value = False
-		return finalize_address_dict(data)
 
-	except requests.exceptions.RequestException as e:
-		frappe.log_error(str(e), _('Revenue Department Web Service Error'))
-		frappe.throw(_('Revenue Department Web Service is not available, please try again later.'))
-	except Exception as e:
-		frappe.log_error(str(e), _('Revenue Department Data Processing Error'))
-		frappe.throw(_('Error processing response from Revenue Department'))
+	if data.get("vmsgerr"):
+		frappe.throw(data.get("vmsgerr"))
+  
+	return finalize_address_dict(data)
 
 
 def finalize_address_dict(data):
+
 	def get_part(data, key, value):
 		return data.get(key, "-") != "-" and value % (map[key], data.get(key)) or ""
 
@@ -118,9 +113,9 @@ def finalize_address_dict(data):
 		"vAmphur": "อ.",
 		"vProvince": "จ.",
 	}
-	name = "{} {}".format(data.get("vtin"), data.get("vName"))
+	name = f"{data.get('vBranchTitleName')} {data.get('vBranchName')}"
 	if "vSurname" in data and data["vSurname"] not in ("-", "", None):
-		name = "{} {}".format(name, data["vSurname"])
+		name = f"{name} {data['vSurname']}"
 	house = data.get("vHouseNumber", "")
 	village = get_part(data, "vVillageName", "%s %s")
 	soi = get_part(data, "vSoiName", "%s %s")
@@ -135,9 +130,9 @@ def finalize_address_dict(data):
 	postal = data.get("vPostCode", "")
 
 	if province == "จ.กรุงเทพมหานคร":
-		thambon = data.get("vThambol") and "แขวง%s" % data["vThambol"] or ""
-		amphur = data.get("vAmphur") and "เขต%s" % data["vAmphur"] or ""
-		province = data.get("vProvince") and "%s" % data["vProvince"] or ""
+		thambon = data.get("vThambol") and f"แขวง{data['vThambol']}" or ""
+		amphur = data.get("vAmphur") and f"เขต{data['vAmphur']}" or ""
+		province = data.get("vProvince") and f"{data['vProvince']}" or ""
 
 	address_parts = filter(
 		lambda x: x != "", [house, village, soi, moo, building, floor, room, street]
@@ -151,6 +146,7 @@ def finalize_address_dict(data):
 		"pincode": postal,
 	}
 
+
 def import_thai_zip_code_data():
 	file_path = f"{frappe.get_app_path('erpnext_thailand')}/public/files/thai_zip_code.csv"
 	with open(file_path, mode="r", encoding="utf-8") as csvfile:
@@ -159,27 +155,28 @@ def import_thai_zip_code_data():
 			if frappe.db.exists("Thai Zip Code", row["ID"]):
 				continue
 			doc = frappe.get_doc({
-                "doctype": "Thai Zip Code",
-                "name": row["ID"],
-                "zip_code": row["Zip Code"],
-                "tambon": row["Tambon"],
-                "amphur": row["Amphur"],
-                "province": row["Province"],
-            })
+				"doctype": "Thai Zip Code",
+				"name": row["ID"],
+				"zip_code": row["Zip Code"],
+				"tambon": row["Tambon"],
+				"amphur": row["Amphur"],
+				"province": row["Province"],
+			})
 			doc.insert(ignore_permissions=True)
 			frappe.db.commit()
 	return "Import completed successfully."
 
+
 @frappe.whitelist()
 def get_location_by_zip_code(zip_code):
-	results = []
 	locations = frappe.get_all("Thai Zip Code", filters={"zip_code": zip_code}, fields=["name", "zip_code", "tambon", "amphur", "province"])
-	for loc in locations:
-		results.append({
+	return [
+		{
 			'id': loc['name'],
 			'zip_code': loc['zip_code'],
 			'tambon': loc['tambon'],
 			'amphur': loc['amphur'],
 			'province': loc['province']
-		})
-	return results
+		}
+		for loc in locations
+	]
