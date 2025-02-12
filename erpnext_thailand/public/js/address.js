@@ -101,6 +101,9 @@ frappe.ui.form.on("Address", {
 				cur_frm.set_value("county", r.message["county"]);
 				cur_frm.set_value("state", r.message["state"]);
 				cur_frm.set_value("pincode", r.message["pincode"]);
+				cur_frm.set_value("tax_id", filters.tax_id);
+				cur_frm.set_value("branch_code", filters.branch);
+				cur_frm.set_value("update_tax_branch", 1);
 			},
 		});
 	},

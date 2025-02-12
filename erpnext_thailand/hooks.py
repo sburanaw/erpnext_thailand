@@ -192,7 +192,10 @@ doc_events = {
 	},
 	"Print Format": {
 		"before_validate": "erpnext_thailand.custom.print_format.allow_update_standard",
-	}
+	},
+    "Address": {
+        "on_update": "erpnext_thailand.custom.address.update_tax_info_in_linked_doc"
+    }
 }
 
 # Scheduled Tasks

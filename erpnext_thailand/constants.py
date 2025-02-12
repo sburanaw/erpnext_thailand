@@ -1,4 +1,26 @@
 ERP_CUSTOM_FIELDS = {
+	"Address": [
+		{
+			"fieldname": "tax_id",
+			"fieldtype": "Data",
+			"label": "Tax ID",
+			"insert_after": "disabled"
+		},
+		{
+			"fieldname": "branch_code",
+			"fieldtype": "Data",
+			"label": "Branch Code",
+			"insert_after": "tax_id"
+		},
+		{
+			"fieldname": "update_tax_branch",
+			"fieldtype": "Check",
+			"label": "Update Tax ID/Branch Code",
+			"insert_after": "branch_code",
+			"description": "Update Tax ID and Brach Code to linked Customer/Supplier"
+		},
+  
+	],
 	"Print Format": [
 		{
 			"fieldname": "default_condition",
