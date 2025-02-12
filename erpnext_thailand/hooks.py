@@ -149,13 +149,6 @@ override_doctype_class = {
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-#     "*": {
-#         "on_update": "method",
-#         "on_cancel": "method",
-#         "on_trash": "method"
-#     }
-# }
 
 doc_events = {
 	"GL Entry": {
@@ -177,6 +170,7 @@ doc_events = {
 	},
     "Sales Invoice": {
         "on_submit": "erpnext_thailand.custom.custom_api.create_sales_tax_invoice_on_zero_tax",
+		"before_cancel": "erpnext_thailand.custom.custom_api.cancel_related_tax_invoice",
     },
 	"Purchase Invoice": {
 		"after_insert": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
@@ -247,7 +241,7 @@ override_doctype_dashboards = {
 # }
 # exempt linked doctypes from being automatically cancelled
 #
-# auto_cancel_exempted_doctypes = ["Auto Repeat"]
+auto_cancel_exempted_doctypes = ["Sales Tax Invoice", "Purchase Tax Invoice"]
 
 # Ignore links to specified DocTypes when deleting documents
 # -----------------------------------------------------------

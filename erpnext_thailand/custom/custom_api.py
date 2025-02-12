@@ -499,3 +499,15 @@ def create_sales_tax_invoice_zero_tax(doc, doctype, base_amount):
     tinv = frappe.get_doc(tinv_dict)
     tinv.insert(ignore_permissions=True)
     return tinv
+
+
+def cancel_related_tax_invoice(doc, method):
+	doctypes = ["Sales Tax Invoice", "Purchase Tax Invoice"]
+	for doctype in doctypes:
+		tinv = frappe.get_all(doctype, filters={
+			"voucher_type": doc.doctype,
+			"voucher_no": doc.name,
+		}, pluck="name")
+		if tinv:
+			tinv = frappe.get_doc(doctype, tinv[0])
+			tinv.cancel()
