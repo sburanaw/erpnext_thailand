@@ -13,7 +13,7 @@ def get_thai_tax_settings(company):
     if not accounts:
         frappe.throw(_("Please set up {0} for company {1}").format(
 			frappe.utils.get_link_to_form("Thai Tax Settings", "Thai Tax Settings"),
-   			company, 
+   			company,
 		))
     return accounts[0]
 
@@ -479,7 +479,7 @@ def create_sales_tax_invoice_on_zero_tax(doc, method):
         t.account_head == setting.sales_tax_account
         and t.tax_amount == 0
     ), doc.taxes)
-    base_amount = sum(tax.base_total for tax in zero_taxes)  
+    base_amount = sum(tax.base_total for tax in zero_taxes)
     if base_amount:
         tinv = create_sales_tax_invoice_zero_tax(doc, doctype, base_amount)
         tinv = update_voucher_tinv(doctype, doc, tinv)
@@ -507,6 +507,7 @@ def cancel_related_tax_invoice(doc, method):
 		tinv = frappe.get_all(doctype, filters={
 			"voucher_type": doc.doctype,
 			"voucher_no": doc.name,
+			"docstatus": ("!=", 2),
 		}, pluck="name")
 		if tinv:
 			tinv = frappe.get_doc(doctype, tinv[0])
