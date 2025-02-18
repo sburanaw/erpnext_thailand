@@ -471,6 +471,12 @@ ERP_PROPERTY_SETTERS = {
 	"Advance Taxes and Charges": [
 		("rate", "precision", "6", "Select"),
 	],
+	"Sales Invoice": [
+		("naming_series", "depends_on", "eval:!doc.amended_from", "Data"),
+	],
+	"Purchase Invoice": [
+		("naming_series", "depends_on", "eval:!doc.amended_from", "Data"),
+	]
 }
 
 BILLING_CUSTOM_FIELDS =  {

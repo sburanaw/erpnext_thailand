@@ -6,3 +6,4 @@ execute:from erpnext_thailand.utils import import_thai_zip_code_data; import_tha
 erpnext_thailand.patches.update_sales_tax_invoice_tax_percent
 erpnext_thailand.patches.add_print_format_field_default_condition
 erpnext_thailand.patches.add_custom_field_address
+erpnext_thailand.patches.amended_invoice_hide_series
