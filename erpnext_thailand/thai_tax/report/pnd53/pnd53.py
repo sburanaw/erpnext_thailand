@@ -169,6 +169,7 @@ def get_data(filters):
 			wht_cert.name.as_("name"),
 			wht_cert.voucher_type.as_("voucher_type"),
 			wht_cert.voucher_no.as_("voucher_no"),
+			wht_cert.company_tax_id.as_("company_tax_id"),
 		)
 		.distinct()
 		.where(
