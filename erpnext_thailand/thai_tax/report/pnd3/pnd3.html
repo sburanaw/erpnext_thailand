@@ -250,21 +250,24 @@
 				{% } %}
 			</div>
 			<div class="company-branch">
-				<div class="box-tax">
-					0
-				</div>
-				<div class="box-tax">
-					0
-				</div>
-				<div class="box-tax">
-					0
-				</div>
-				<div class="box-tax">
-					0
-				</div>
-				<div class="box-tax">
-					0
-				</div>
+				{% var company_branch = data[0].company_branch %}
+				{% if (company_branch) { %}
+					<div class="box-tax">
+						{%= company_branch.substring(0, 1) %}
+					</div>
+					<div class="box-tax">
+						{%= company_branch.substring(1, 2) %}
+					</div>
+					<div class="box-tax">
+						{%= company_branch.substring(2, 3) %}
+					</div>
+					<div class="box-tax">
+						{%= company_branch.substring(3, 4) %}
+					</div>
+					<div class="box-tax">
+						{%= company_branch.substring(4, 5) %}
+					</div>
+				{% } %}
 			</div>
 		</div>
 		<!-- Page Number -->
