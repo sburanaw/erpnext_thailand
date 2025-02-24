@@ -151,6 +151,7 @@ def get_data(filters):
 	wht_items = frappe.qb.DocType("Withholding Tax Items")
 	supplier = frappe.qb.DocType("Supplier")
 	address = frappe.qb.DocType("Address")
+	company_address = address.as_("company_address")
 	round = CustomFunction("round", ["value", "digit"])
 	month = CustomFunction("month", ["date"])
 	year = CustomFunction("year", ["date"])
@@ -168,6 +169,8 @@ def get_data(filters):
 		.on(supplier.name == wht_cert.supplier)
 		.left_join(address)
 		.on(address.name == wht_cert.supplier_address)
+		.left_join(company_address)
+		.on(company_address.name == wht_cert.company_address)
 		.select(
 			supplier.tax_id.as_("supplier_tax_id"),
 			supplier.branch_code.as_("branch"),
@@ -198,6 +201,8 @@ def get_data(filters):
 			wht_cert.name.as_("name"),
 			wht_cert.voucher_type.as_("voucher_type"),
 			wht_cert.voucher_no.as_("voucher_no"),
+			wht_cert.company_tax_id.as_("company_tax_id"),
+			company_address.branch_code.as_("company_branch"),
 		)
 		.distinct()
 		.where(
