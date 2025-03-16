@@ -222,8 +222,8 @@
 						{%= i + 1 %}
 					</td>
 					<td class="text-center">
-						{% if (row.report_date) { %}
-							{%= row.report_date.substring(8, 10) + "/" + row.report_date.substring(5, 7) + "/" + (Number(row.report_date.substring(0, 4)) + 543) %}
+						{% if (row.date) { %}
+							{%= row.date.substring(8, 10) + "/" + row.date.substring(5, 7) + "/" + (Number(row.date.substring(0, 4)) + 543) %}
 						{% } %}
 					</td>
 					<td>
