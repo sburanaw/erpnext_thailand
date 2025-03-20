@@ -72,7 +72,7 @@ def get_columns():
 			"fieldname": "tax_percent",
 			"fieldtype": "Percent",
 			"width": 0,
-			"hidden": 1,
+			"hidden": 0,
 		},
 		{
 			"label": _("Ref Voucher Type"),

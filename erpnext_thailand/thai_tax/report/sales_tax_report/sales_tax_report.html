@@ -50,22 +50,22 @@
 		width: 6%;
 	}
 	.col-3 {
-		width: 11%;
+		width: 10%;
 	}
 	.col-4 {
-		width: 11%;
+		width: 10%;
 	}
 	.col-5 {
-		width: 19%;
+		width: 18%;
 	}
 	.col-6 {
 		width: 13%;
 	}
 	.col-7 {
-		width: 7%;
+		width: 6%;
 	}
 	.col-8 {
-		width: 7%;
+		width: 6%;
 	}
 	.col-9 {
 		width: 8%;
@@ -75,6 +75,9 @@
 	}
 	.col-11 {
 		width: 8%;
+	}
+	.col-12 {
+		width: 5%;
 	}
 	.bg-grey {
 		background-color: #d3d3d3;
@@ -189,6 +192,9 @@
 				<th class="bg-grey text-center" colspan="2">
 					<strong>สถานประกอบการ</strong>
 				</th>
+				<th class="col-12 bg-grey text-center" rowspan="2">
+					<strong>% ภาษี</strong>
+				</th>
 				<th class="col-9 bg-grey text-center" rowspan="2">
 					<strong>มูลค่าสินค้าหรือบริการ</strong>
 				</th>
@@ -248,6 +254,9 @@
 							{%= row.branch_code %}
 						{% } %}
 					</td>
+					<td class="text-center">
+						{%= row.tax_percent %}
+					</td>
 					<td class="text-right">
 						{% var sum_tax_base = sum_tax_base + row.tax_base %}
 						{%= row.tax_base.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}
@@ -264,7 +273,7 @@
 			{% } %}
 			<!-- Subtotal -->
 			<tr>
-				<td class="bg-grey text-center" colspan="8">
+				<td class="bg-grey text-center" colspan="9">
 					<strong>รวมหน้า</strong>
 				</td>
 				<td class="text-right">
@@ -282,7 +291,7 @@
 			</tr>
 			{% if (set_number == total_set) { %}
 				<tr>
-					<td class="bg-grey text-center" colspan="8">
+					<td class="bg-grey text-center" colspan="9">
 						<strong>รวมทั้งสิ้น</strong>
 					</td>
 					<td class="text-right">
