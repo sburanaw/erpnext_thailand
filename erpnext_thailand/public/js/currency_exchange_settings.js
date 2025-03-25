@@ -12,7 +12,7 @@ frappe.ui.form.on('Currency Exchange Settings', {
         // Example data to add
         const set_parameters = [
             { key: 'from_currency', value: '{from_currency}' },
-            { key: 'to_currency', value: '{to_currency}' },
+            { key: 'to_currency', value: 'THB' },
             { key: 'transaction_date', value: '{transaction_date}' }
         ];
 
@@ -33,7 +33,7 @@ frappe.ui.form.on('Currency Exchange Settings', {
         const set_result_key = [
             { key: 'message' },
             { key: 'rates' },
-            { key: '{to_currency}' }
+            { key: 'THB' }
         ];
 
         // Add new rows
