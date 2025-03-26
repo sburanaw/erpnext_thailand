@@ -31,7 +31,7 @@ fixtures = [
 			]
 		],
 	},
-    {
+	{
 		"doctype": "Property Setter",
 		"filters": [
 			[
@@ -39,6 +39,18 @@ fixtures = [
 				"in",
 				(
 					"Currency Exchange Settings-service_provider-options",
+				),
+			]
+		],
+	},
+	{
+		"doctype": "Custom Field",
+		"filters": [
+			[
+				"name",
+				"in",
+				(
+					"Currency Exchange Settings-custom_client_id",
 				),
 			]
 		],
@@ -80,7 +92,7 @@ doctype_js = {
 	"Purchase Tax Invoice": "public/js/purchase_tax_invoice.js",
 	"Sales Tax Invoice": "public/js/sales_tax_invoice.js",
 	"Address": "public/js/address.js",
-    "Currency Exchange Settings": "public/js/currency_exchange_settings.js",
+	"Currency Exchange Settings": "public/js/currency_exchange_settings.js",
 }
 
 
@@ -158,6 +170,7 @@ before_app_uninstall = "erpnext_thailand.uninstall.before_app_uninstall"
 # Override standard doctype classes
 override_doctype_class = {
 	"Employee Advance": "erpnext_thailand.custom.employee_advance.ThaiTaxEmployeeAdvance",
+	"Currency Exchange Settings": "erpnext_thailand.custom.currency_exchange_settings.CurrencyExchangeSettings",
 }
 
 # Document Events

@@ -12,7 +12,7 @@ frappe.ui.form.on("Currency Exchange Settings", {
 		// Example data to add
 		const set_parameters = [
 			{ key: "from_currency", value: "{from_currency}" },
-			{ key: "to_currency", value: "THB" },
+			{ key: "to_currency", value: "{to_currency}" },
 			{ key: "transaction_date", value: "{transaction_date}" }
 		];
 
@@ -35,7 +35,7 @@ frappe.ui.form.on("Currency Exchange Settings", {
 		const set_result_key = [
 			{ key: "message" },
 			{ key: "rates" },
-			{ key: "THB" }
+			{ key: "{to_currency}" }
 		];
 
 		// Add new rows
@@ -54,10 +54,10 @@ frappe.ui.form.on("Currency Exchange Settings", {
 			frm.set_value("api_endpoint", `${base_url}/api/v2/method/erpnext_thailand.custom.currency_exchange_bot_api.get_api_currency_exchange`);
 			frm.set_value("url", null)
 			frm.toggle_display("use_http", false);
-
 			frm.events.set_table_parameters(frm);
 			frm.events.set_table_result_key(frm);
         } else {
+			frm.set_value("custom_client_id", null);
             frm.toggle_display("use_http", true);
         }
     }

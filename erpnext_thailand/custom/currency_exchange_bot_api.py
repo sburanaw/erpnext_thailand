@@ -5,12 +5,11 @@ from datetime import datetime, timedelta
 
 
 @frappe.whitelist(allow_guest=True)
-def get_api_currency_exchange(from_currency, to_currency, transaction_date):
-
+def get_api_currency_exchange(
+	from_currency, to_currency, transaction_date, client_id=None):
 	# Convert the transaction_date string to a datetime object
 	trans_start_date = datetime.strptime(transaction_date, "%Y-%m-%d")
 	trans_start_date = trans_start_date - timedelta(days=5)
-
 	trans_start_date = trans_start_date.strftime("%Y-%m-%d")
 
 	trans_end_date = datetime.strptime(transaction_date, "%Y-%m-%d")
@@ -21,8 +20,10 @@ def get_api_currency_exchange(from_currency, to_currency, transaction_date):
 	end_date = trans_end_date
 	currency = from_currency
 
-	site_config = frappe.get_site_config()
-	client_id = site_config.get("bot_client_id")
+	if not client_id:
+		currency_exchange_settings = frappe.get_single("Currency Exchange Settings")
+		client_id = currency_exchange_settings.get_password("custom_client_id")
+
 	conn = http.client.HTTPSConnection("apigw1.bot.or.th")
 	headers = {
 		"X-IBM-Client-Id": client_id,
@@ -52,12 +53,7 @@ def get_api_currency_exchange(from_currency, to_currency, transaction_date):
 
 			# Get the latest period's data (the last element in the sorted list)
 			latest_period_data = sorted_data[-1]
-			rates = latest_period_data["selling"]
-			rates = float(rates)
-		else:
-			rates = 0
-	else:
-		rates = 0
+			rates = float(latest_period_data["selling"])
 
 	# Creating the response dictionary
 	response_data = {
