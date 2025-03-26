@@ -17,10 +17,11 @@ def rename_temporarily_named_docs(doctype):
 			auto_commit=True,
 		)
 		# Monkey patch
-		for tax_invoice in ["Sales Tax Invoice", "Purchase Tax Invoice"]:
-			frappe.db.sql(
-				f"UPDATE `tab{tax_invoice}` SET gl_entry = %s where gl_entry = %s",
-				(newname, oldname),
-				auto_commit=True,
-			)
+		if "erpnext_thailand" in frappe.get_installed_apps():
+			for tax_invoice in ["Sales Tax Invoice", "Purchase Tax Invoice"]:
+				frappe.db.sql(
+					f"UPDATE `tab{tax_invoice}` SET gl_entry = %s where gl_entry = %s",
+					(newname, oldname),
+					auto_commit=True,
+				)
 		# --
