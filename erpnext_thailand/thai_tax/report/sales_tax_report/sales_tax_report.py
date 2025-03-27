@@ -20,10 +20,18 @@ def get_columns():
 			"fieldtype": "Link",
 			"options": "Address",
 			"width": 0,
+			"hidden": 1,
 		},
 		{
 			"label": _("Report Date"),
 			"fieldname": "report_date",
+			"fieldtype": "Date",
+			"width": 0,
+			"hidden": 1,
+		},
+		{
+			"label": _("Date"),
+			"fieldname": "date",
 			"fieldtype": "Date",
 			"width": 0,
 		},
@@ -64,6 +72,7 @@ def get_columns():
 			"fieldname": "tax_percent",
 			"fieldtype": "Percent",
 			"width": 0,
+			"hidden": 0,
 		},
 		{
 			"label": _("Ref Voucher Type"),
@@ -113,6 +122,7 @@ def get_data(filters):
 			addr_company.pincode.as_("company_pincode"),
 			addr_company.branch_code.as_("company_branch_code"),
 			tinv.report_date.as_("report_date"),
+			tinv.date.as_("date"),
 			Case()
 			.when(tinv.docstatus == 1, tinv.name)
 			.else_(concat(tinv.name, " (CANCEL)"))

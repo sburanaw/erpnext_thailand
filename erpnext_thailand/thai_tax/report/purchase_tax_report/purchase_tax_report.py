@@ -20,10 +20,18 @@ def get_columns():
 			"fieldtype": "Link",
 			"options": "Address",
 			"width": 0,
+			"hidden": 1,
 		},
 		{
 			"label": _("Report Date"),
 			"fieldname": "report_date",
+			"fieldtype": "Date",
+			"width": 0,
+			"hidden": 1,
+		},
+		{
+			"label": _("Date"),
+			"fieldname": "date",
 			"fieldtype": "Date",
 			"width": 0,
 		},
@@ -56,6 +64,7 @@ def get_columns():
 			"fieldname": "supplier_address",
 			"fieldtype": "Data",
 			"width": 0,
+			"hidden": 1,
 		},
 		{
 			"label": _("Tax Base"),
@@ -90,6 +99,7 @@ def get_columns():
 			"fieldtype": "Link",
 			"options": "Purchase Tax Invoice",
 			"width": 0,
+			"hidden": 1,
 		},
 	]
 
@@ -120,6 +130,7 @@ def get_data(filters):
 		.select(
 			tinv.company_tax_address.as_("company_tax_address"),
 			tinv.report_date.as_("report_date"),
+			tinv.date.as_("date"),
 			addr_company.address_line1.as_("company_address_line1"),
 			addr_company.address_line2.as_("company_address_line2"),
 			addr_company.city.as_("company_city"),
@@ -149,7 +160,7 @@ def get_data(filters):
 			comp.tax_id.as_("company_tax_id"),
 		)
 		.where(tinv.docstatus == 1)
-		.orderby(tinv.report_date)
+		.orderby(tinv.date)
 	)
 
 	if filters.get("filter_based_on") == "Fiscal Year":

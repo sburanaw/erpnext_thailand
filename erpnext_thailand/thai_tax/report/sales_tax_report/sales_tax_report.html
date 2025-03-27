@@ -50,22 +50,22 @@
 		width: 6%;
 	}
 	.col-3 {
-		width: 11%;
+		width: 10%;
 	}
 	.col-4 {
-		width: 11%;
+		width: 10%;
 	}
 	.col-5 {
-		width: 19%;
+		width: 18%;
 	}
 	.col-6 {
 		width: 13%;
 	}
 	.col-7 {
-		width: 7%;
+		width: 6%;
 	}
 	.col-8 {
-		width: 7%;
+		width: 6%;
 	}
 	.col-9 {
 		width: 8%;
@@ -75,6 +75,15 @@
 	}
 	.col-11 {
 		width: 8%;
+	}
+	.col-12 {
+		width: 5%;
+	}
+	.col-sum-1 {
+		width: 90%;
+	}
+	.col-sum-2 {
+		width: 10%;
 	}
 	.bg-grey {
 		background-color: #d3d3d3;
@@ -164,6 +173,11 @@
 {% var grand_tax_total = 0 %}
 {% var number_per_set = 10 %}
 {% var total_set = Math.ceil((data.length - 1) / number_per_set) %}
+{% var summary = {
+	"amount_base": {},
+	"amount_tax": 0,
+	"amount_total": 0
+} %}
 {% for(var set_number = 1; set_number <= total_set; set_number++) { %}
 	{% var sum_tax_base = 0 %}
 	{% var sum_tax_amount = 0 %}
@@ -188,6 +202,9 @@
 				</th>
 				<th class="bg-grey text-center" colspan="2">
 					<strong>สถานประกอบการ</strong>
+				</th>
+				<th class="col-12 bg-grey text-center" rowspan="2">
+					<strong>% ภาษี</strong>
 				</th>
 				<th class="col-9 bg-grey text-center" rowspan="2">
 					<strong>มูลค่าสินค้าหรือบริการ</strong>
@@ -222,8 +239,8 @@
 						{%= i + 1 %}
 					</td>
 					<td class="text-center">
-						{% if (row.report_date) { %}
-							{%= row.report_date.substring(8, 10) + "/" + row.report_date.substring(5, 7) + "/" + (Number(row.report_date.substring(0, 4)) + 543) %}
+						{% if (row.date) { %}
+							{%= row.date.substring(8, 10) + "/" + row.date.substring(5, 7) + "/" + (Number(row.date.substring(0, 4)) + 543) %}
 						{% } %}
 					</td>
 					<td>
@@ -248,6 +265,9 @@
 							{%= row.branch_code %}
 						{% } %}
 					</td>
+					<td class="text-center">
+						{%= row.tax_percent %}
+					</td>
 					<td class="text-right">
 						{% var sum_tax_base = sum_tax_base + row.tax_base %}
 						{%= row.tax_base.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}
@@ -260,11 +280,18 @@
 						{% var sum_tax_total = sum_tax_total + row.tax_base + row.tax_amount %}
 						{%= (row.tax_base + row.tax_amount).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}
 					</td>
+					{% if(summary["amount_base"].hasOwnProperty(row.tax_percent)) { %}
+						{% summary["amount_base"][row.tax_percent] = summary["amount_base"][row.tax_percent] + row.tax_base %}
+					{% } else { %}
+						{% summary["amount_base"][row.tax_percent] = row.tax_base %}
+					{% } %}
+					{% summary["amount_tax"] = summary["amount_tax"] + row.tax_amount %}
+					{% summary["amount_total"] = summary["amount_total"] + row.tax_base + row.tax_amount %}
 				</tr>
 			{% } %}
 			<!-- Subtotal -->
 			<tr>
-				<td class="bg-grey text-center" colspan="8">
+				<td class="bg-grey text-center" colspan="9">
 					<strong>รวมหน้า</strong>
 				</td>
 				<td class="text-right">
@@ -282,7 +309,7 @@
 			</tr>
 			{% if (set_number == total_set) { %}
 				<tr>
-					<td class="bg-grey text-center" colspan="8">
+					<td class="bg-grey text-center" colspan="9">
 						<strong>รวมทั้งสิ้น</strong>
 					</td>
 					<td class="text-right">
@@ -299,3 +326,34 @@
 		</tbody>
 	</table>
 {% } %}
+
+<!-- Summary -->
+<table style="page-break-inside: avoid;">
+	{% tax_list = Object.keys(summary["amount_base"]) %}
+	{% for(var k = 0; k < tax_list.length; k++) { %}
+		<tr>
+			<td class="text-right col-sum-1" style="border: 0px !important;">
+				จำนวนเงินก่อนภาษีอัตรา {%= tax_list[k] %} %
+			</td>
+			<td class="text-right col-sum-2" style="border: 0px !important;">
+				{%= summary["amount_base"][tax_list[k]].toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}
+			</td>
+		</tr>
+	{% } %}
+	<tr>
+		<td class="text-right col-sum-1" style="border: 0px !important;">
+			จำนวนเงินภาษีมูลค่าเพิ่มรวม
+		</td>
+		<td class="text-right col-sum-2" style="border: 0px !important;">
+			{%= summary["amount_tax"].toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}
+		</td>
+	</tr>
+	<tr>
+		<td class="text-right col-sum-1" style="border: 0px !important;">
+			ยอดเงินรวม
+		</td>
+		<td class="text-right col-sum-2" style="border: 0px !important;">
+			{%= summary["amount_total"].toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}
+		</td>
+	</tr>
+</table>

@@ -6,6 +6,17 @@ from frappe.utils import add_months
 
 
 class PurchaseTaxInvoice(Document):
+    
+	def submit(self):
+		if self.against_voucher_type == "Payment Entry":
+			frappe.db.set_value("Payment Entry", self.against_voucher, "has_purchase_tax_invoice", 1)
+		super().submit()
+
+	def cancel(self):
+		if self.against_voucher_type == "Payment Entry":
+			frappe.db.set_value("Payment Entry", self.against_voucher, "has_purchase_tax_invoice", 0)
+		super().cancel()
+
 	def validate(self):
 		self.compute_report_date()
 
