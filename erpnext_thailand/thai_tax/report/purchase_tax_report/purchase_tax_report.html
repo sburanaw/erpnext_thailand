@@ -37,11 +37,23 @@
 		width: 100%;
 		border-collapse: collapse;
 	}
-	.print-format td, .print-format th {
+	.print-format td {
+		vertical-align: top !important;
+		padding: 2px !important;
+		color: #000000 !important;
+	}
+	.print-format th {
 		vertical-align: top !important;
 		padding: 2px !important;
 		border: 1px solid #000000;
 		color: #000000 !important;
+	}
+	.border-left-right {
+		border-left: 1px solid black;
+		border-right: 1px solid black;
+	}
+	.border {
+    	border: 1px solid black;
 	}
 	.col-1 {
 		width: 2%;
@@ -218,45 +230,45 @@
 			{% for (var i = (set_number - 1) * number_per_set; i < Math.min(set_number * number_per_set, data.length - 1); i++) { %}
 				{% var row = data[i] %}
 				<tr>
-					<td class="text-center">
+					<td class="text-center border-left-right">
 						{%= i + 1 %}
 					</td>
-					<td class="text-center">
+					<td class="text-center border-left-right">
 						{% if (row.date) { %}
 							{%= row.date.substring(8, 10) + "/" + row.date.substring(5, 7) + "/" + (Number(row.date.substring(0, 4)) + 543) %}
 						{% } %}
 					</td>
-					<td>
+					<td class="border-left-right">
 						{%= row.name %}
 					</td>
-					<td>
+					<td class="border-left-right">
 						{%= row.voucher_no %}
 					</td>
-					<td>
+					<td class="border-left-right">
 						{%= row.party_name %}
 					</td>
-					<td>
+					<td class="border-left-right">
 						{%= row.tax_id %}
 					</td>
-					<td>
+					<td class="border-left-right">
 						{% if (!row.branch_code || row.branch_code == "-" || row.branch_code == "00000") { %}
 							00000
 						{% } %}
 					</td>
-					<td>
+					<td class="border-left-right">
 						{% if (row.branch_code && row.branch_code != "-" && row.branch_code != "00000") { %}
 							{%= row.branch_code %}
 						{% } %}
 					</td>
-					<td class="text-right">
+					<td class="text-right border-left-right">
 						{% var sum_tax_base = sum_tax_base + row.tax_base %}
 						{%= row.tax_base.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}
 					</td>
-					<td class="text-right">
+					<td class="text-right border-left-right">
 						{% var sum_tax_amount = sum_tax_amount + row.tax_amount %}
 						{%= row.tax_amount.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}
 					</td>
-					<td class="text-right">
+					<td class="text-right border-left-right">
 						{% var sum_tax_total = sum_tax_total + row.tax_base + row.tax_amount %}
 						{%= (row.tax_base + row.tax_amount).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}
 					</td>
@@ -264,34 +276,34 @@
 			{% } %}
 			<!-- Subtotal -->
 			<tr>
-				<td class="bg-grey text-center" colspan="8">
+				<td class="bg-grey text-center border" colspan="8">
 					<strong>รวมหน้า</strong>
 				</td>
-				<td class="text-right">
+				<td class="bg-grey text-right border">
 					{% var grand_tax_base = grand_tax_base + sum_tax_base %}
 					<strong>{%= sum_tax_base.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}</strong>
 				</td>
-				<td class="text-right">
+				<td class="bg-grey text-right border">
 					{% var grand_tax_amount = grand_tax_amount + sum_tax_amount %}
 					<strong>{%= sum_tax_amount.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}</strong>
 				</td>
-				<td class="text-right">
+				<td class="bg-grey text-right border">
 					{% var grand_tax_total = grand_tax_total + sum_tax_total %}
 					<strong>{%= sum_tax_total.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}</strong>
 				</td>
 			</tr>
 			{% if (set_number == total_set) { %}
 				<tr>
-					<td class="bg-grey text-center" colspan="8">
+					<td class="bg-grey text-center border" colspan="8">
 						<strong>รวมทั้งสิ้น</strong>
 					</td>
-					<td class="text-right">
+					<td class="bg-grey text-right border">
 						<strong>{%= grand_tax_base.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}</strong>
 					</td>
-					<td class="text-right">
+					<td class="bg-grey text-right border">
 						<strong>{%= grand_tax_amount.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}</strong>
 					</td>
-					<td class="text-right">
+					<td class="bg-grey text-right border">
 						<strong>{%= grand_tax_total.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}</strong>
 					</td>
 				</tr>
