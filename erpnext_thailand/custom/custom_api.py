@@ -52,6 +52,9 @@ def create_tax_invoice_on_gl_tax(doc, method):
 			elif voucher.doctype == "Payment Entry":
 				base_amount = voucher.tax_base_amount
 			elif voucher.doctype == "Journal Entry":
+				# If clear_undue_tax is not checked, return
+				if not voucher.create_tax_invoice:
+					return
 				# For Journal Entry, use Tax Invoice Detail table as voucher
 				voucher = frappe.get_doc("Journal Entry Tax Invoice Detail", doc.voucher_detail_no)
 				base_amount = voucher.tax_base_amount
@@ -219,6 +222,7 @@ def make_clear_vat_journal_entry(dt, dn):
 	tax = get_thai_tax_settings(doc.company)
 	je = frappe.new_doc("Journal Entry")
 	je.entry_type = "Journal Entry"
+	je.create_tax_invoice = 1
 	je.supplier = doc.party_type == "Supplier" and doc.party or False
 	je.company_tax_address = doc.company_tax_address
 	je.for_payment = doc.name

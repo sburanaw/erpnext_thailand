@@ -177,6 +177,7 @@ ERP_CUSTOM_FIELDS = {
 			"fieldtype": "Tab Break",
 			"insert_after": "auto_repeat",
 			"label": "Tax Invoice",
+			"depends_on": "eval:doc.create_tax_invoice==1",
 		},
 		{
 			"fieldname": "company_tax_address",
@@ -184,6 +185,13 @@ ERP_CUSTOM_FIELDS = {
 			"insert_after": "tax_invoice",
 			"label": "Company Tax Address",
 			"options": "Address",
+		},
+		{
+			"fieldname": "create_tax_invoice",
+			"fieldtype": "Check",
+			"insert_after": "voucher_type",
+			"label": "Create Tax Invoice",
+			"description": "If checked, system will create Tax Invoice record for tax entry",
 		},
 		{
 			"fieldname": "column_break_3djv9",
