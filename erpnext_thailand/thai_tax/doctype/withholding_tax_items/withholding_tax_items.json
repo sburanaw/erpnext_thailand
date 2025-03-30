@@ -24,8 +24,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Description",
-   "length": 240,
-   "read_only": 1
+   "length": 240
   },
   {
    "fieldname": "column_break_2",
@@ -78,7 +77,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-03-07 17:34:11.204168",
+ "modified": "2025-03-30 16:35:12.647799",
  "modified_by": "Administrator",
  "module": "Thai Tax",
  "name": "Withholding Tax Items",
