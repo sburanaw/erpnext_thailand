@@ -23,6 +23,7 @@
   "threshold_type",
   "threshold_date",
   "get_sales_invoices",
+  "include_draft_invoices",
   "section_break_9",
   "sales_billing_line",
   "section_break_13",
@@ -180,12 +181,20 @@
    "fieldtype": "Check",
    "label": "Closed",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "description": "If not unchedked, only submtted invoice will be retrieved",
+   "fieldname": "include_draft_invoices",
+   "fieldtype": "Check",
+   "label": "Include Draft Invoices"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-12-27 17:50:35.162274",
+ "modified": "2025-03-31 17:14:05.994883",
  "modified_by": "Administrator",
  "module": "Thai Billing",
  "name": "Sales Billing",

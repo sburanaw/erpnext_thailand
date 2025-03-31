@@ -20,13 +20,16 @@ class SalesBilling(Document):
 
 
 @frappe.whitelist()
-def get_due_billing(customer=None, currency=None, tax_type=None, threshold_type=None, threshold_date=None):
+def get_due_billing(customer=None, currency=None, tax_type=None, threshold_type=None, threshold_date=None, include_draft_invoices=None):
     if not (customer, currency, tax_type, threshold_date):
         return {}
+    docstatus = [1]
+    if include_draft_invoices:
+        docstatus = [0, 1]
     filters = {
         "customer": customer,
         "currency": currency,
-        "docstatus": 1,
+        "docstatus": ["in", docstatus],
         "outstanding_amount": [">", 0],
     }
     if tax_type:

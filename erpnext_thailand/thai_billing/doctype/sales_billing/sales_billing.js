@@ -39,7 +39,8 @@ frappe.ui.form.on("Sales Billing", {
                     currency: frm.doc.currency,
 					tax_type: frm.doc.tax_type,
                     threshold_type: frm.doc.threshold_type,
-                    threshold_date: frm.doc.threshold_date
+                    threshold_date: frm.doc.threshold_date,
+					include_draft_invoices: frm.doc.include_draft_invoices
                 },
                 callback: function(r) {
                     console.log(r.message)
