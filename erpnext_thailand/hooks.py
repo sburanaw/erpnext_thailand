@@ -139,7 +139,7 @@ jinja = {
 # before_install = "erpnext_thailand.install.before_install"
 after_install = "erpnext_thailand.install.after_install"
 after_app_install = "erpnext_thailand.install.after_app_install"
-after_migrate = "thai_tax.install.after_migrate"
+#after_migrate = "thai_tax.install.after_migrate"
 
 # Uninstallation
 # ------------
