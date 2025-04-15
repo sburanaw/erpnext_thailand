@@ -51,3 +51,6 @@ def make_property_setters():
 def after_app_install(app_name):
 	if app_name == "hrms":
 		create_custom_fields(HRMS_CUSTOM_FIELDS, ignore_validate=True)
+
+def after_migrate():
+	after_install()
