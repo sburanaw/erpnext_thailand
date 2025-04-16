@@ -97,7 +97,7 @@ def validate_normal_invoice(doc, order_doctype, order_field):
             frappe.throw(_("Allocated amount cannot exceed the deposit amount."))
     
     # Ensure total allocated amount (on ui) does not exceed the deposit balance (from db)
-    doc_json = json.dumps(doc.as_dict())
+    doc_json = json.dumps(doc.as_dict(), indent=4, sort_keys=True, default=str)
     db_deposit = sum([x["deposit_amount"]for x in get_deposits(doc_json)])
     ui_allocation = sum([x.allocated_amount for x in doc.deposits])
     if ui_allocation > db_deposit:
