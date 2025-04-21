@@ -679,17 +679,19 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"label": "Deposit Deductions"
 		},
 		{
-			"fieldname": "get_deposits",
-			"fieldtype": "Button",
+			"fieldname": "manual_deposit_allocation",
+			"fieldtype": "Check",
 			"insert_after": "deposit_deductions",
-			"label": "Get Deposit Received"
+			"label": "Manual Deposit Allocation",
+			"read_only": 0,
 		},
 		{
 			"fieldname": "deposits",
 			"fieldtype": "Table",
-			"insert_after": "get_deposits",
+			"insert_after": "manual_deposit_allocation",
 			"label": "Deposits",
-			"options": "Sales Invoice Deposit"
+			"options": "Sales Invoice Deposit",
+			"read_only_depends_on": "eval:!doc.manual_deposit_allocation",
 		}
 	],
     "Sales Invoice Item": [
@@ -721,17 +723,19 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"label": "Deposit Deductions"
 		},
 		{
-			"fieldname": "get_deposits",
-			"fieldtype": "Button",
+			"fieldname": "manual_deposit_allocation",
+			"fieldtype": "Check",
 			"insert_after": "deposit_deductions",
-			"label": "Get Deposit Paid"
+			"label": "Manual Deposit Allocation",
+			"read_only": 0,
 		},
 		{
 			"fieldname": "deposits",
 			"fieldtype": "Table",
-			"insert_after": "get_deposits",
+			"insert_after": "manual_deposit_allocation",
 			"label": "Deposits",
-			"options": "Purchase Invoice Deposit"
+			"options": "Purchase Invoice Deposit",
+			"read_only_depends_on": "eval:!doc.manual_deposit_allocation",
 		}
 	],
     "Purchase Invoice Item": [

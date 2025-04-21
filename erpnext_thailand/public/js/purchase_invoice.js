@@ -13,9 +13,24 @@ frappe.ui.form.on("Purchase Invoice", {
                 frm.events.get_deposits(frm, false);
             }, 1000)    
         };
-    },
+        // Disable add row on deposits
+        frm.set_df_property("deposits", "cannot_add_rows", true); // Hide add row button
+        frm.set_df_property("deposits", "cannot_delete_rows", true); // Hide delete button
+        frm.set_df_property("deposits", "cannot_delete_all_rows", true); // Hide delete all button
+     },
 
     get_deposits: function(frm, is_button_clicked = true) {
         erpnext_thailand.deposit_utils.get_deposits(frm, is_button_clicked);
     }
 });
+
+// frappe.ui.form.on("Purchase Invoice Deposit", {
+//     manual: function(frm, cdt, cdn) {
+//         let row = locals[cdt][cdn];
+//         if (row.manual) {
+//             frm.set_df_property("deposits", "read_only", 0, frm.docname, "allocated_amount", row.name)
+//         } else {
+//             frm.set_df_property("deposits", "read_only", 1, frm.docname, "allocated_amount", row.name)
+//         }
+//     }
+// });
