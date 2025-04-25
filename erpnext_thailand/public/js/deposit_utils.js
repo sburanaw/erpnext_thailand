@@ -29,9 +29,7 @@ erpnext_thailand.deposit_utils.get_deposits = function(frm, is_button_clicked = 
                     let formatted_amount = new Intl.NumberFormat().format(allocated_amount);
                     frappe.show_alert({
                         message: __(
-                            "Deposit amount <b>{0}</b> will be allocated.<br/>\
-                            Please verify <b>Deposit Deductions</b> section in tab Payment.<br/>\
-                            Then save the document to add the deduction amount in Items child table.",
+                            "Deposit amount <b>{0}</b> will be allocated when you save this invoice.",
                             [formatted_amount]
                         ),
                         indicator: "green"

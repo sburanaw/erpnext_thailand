@@ -126,6 +126,14 @@ def apply_deposit_deduction(doc, method):
     """
     if doc.is_deposit_invoice or doc.docstatus != 0:  # Only draft
         return
+    
+    # Recalc deposit if not manual allocation
+    if not doc.manual_deposit_allocation:
+        doc_json = json.dumps(doc.as_dict(), indent=4, sort_keys=True, default=str)
+        calc_deposits = get_deposits(doc_json)
+        doc.deposits = []
+        for d in calc_deposits:
+            doc.append("deposits", d)
 
     # Remove any line item with is_deposit_item = 1
     doc.items = [item for item in doc.items if not frappe.db.get_value("Item", item.item_code, "is_deposit_item")]

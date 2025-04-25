@@ -6,13 +6,17 @@ frappe.ui.form.on("Sales Invoice", {
         }
     },
 
-    refresh: function(frm) {
+    onload: function(frm) {
         // Delay for 1 second and then trigger get_deposits
         if (frm.is_new() && !frm.doc.is_deposit_invoice) {
             setTimeout(function() {
                 frm.events.get_deposits(frm, false);
             }, 1000)    
         };
+        // Disable add row on deposits
+        frm.set_df_property("deposits", "cannot_add_rows", true); // Hide add row button
+        frm.set_df_property("deposits", "cannot_delete_rows", true); // Hide delete button
+        frm.set_df_property("deposits", "cannot_delete_all_rows", true); // Hide delete all button
     },
 
     get_deposits: function(frm, is_button_clicked = true) {
