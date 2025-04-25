@@ -31,30 +31,6 @@ fixtures = [
 			]
 		],
 	},
-	{
-		"doctype": "Property Setter",
-		"filters": [
-			[
-				"name",
-				"in",
-				(
-					"Currency Exchange Settings-service_provider-options",
-				),
-			]
-		],
-	},
-	{
-		"doctype": "Custom Field",
-		"filters": [
-			[
-				"name",
-				"in",
-				(
-					"Currency Exchange Settings-custom_client_id",
-				),
-			]
-		],
-	}
 ]
 
 
@@ -88,6 +64,8 @@ doctype_js = {
 	"Payment Entry": "public/js/payment_entry.js",
 	"Expense Claim": "public/js/expense_claim.js",
 	"Purchase Invoice": "public/js/purchase_invoice.js",
+	"Sales Order": "public/js/sales_order.js",
+	"Purchase Order": "public/js/purchase_order.js",
 	"Sales Invoice": "public/js/sales_invoice.js",
 	"Purchase Tax Invoice": "public/js/purchase_tax_invoice.js",
 	"Sales Tax Invoice": "public/js/sales_tax_invoice.js",
@@ -139,6 +117,7 @@ jinja = {
 # before_install = "erpnext_thailand.install.before_install"
 after_install = "erpnext_thailand.install.after_install"
 after_app_install = "erpnext_thailand.install.after_app_install"
+after_migrate = "erpnext_thailand.install.after_migrate"
 
 # Uninstallation
 # ------------
@@ -199,10 +178,22 @@ doc_events = {
     "Sales Invoice": {
         "on_submit": "erpnext_thailand.custom.custom_api.create_sales_tax_invoice_on_zero_tax",
 		"before_cancel": "erpnext_thailand.custom.custom_api.cancel_related_tax_invoice",
+        "before_validate": [
+            "erpnext_thailand.custom.deposit_utils.validate_invoice",
+            "erpnext_thailand.custom.deposit_utils.apply_deposit_deduction"
+		],
+        "on_cancel": "erpnext_thailand.custom.deposit_utils.cancel_deposit_invoice",        
+        "on_trash": "erpnext_thailand.custom.deposit_utils.cancel_deposit_invoice",
     },
 	"Purchase Invoice": {
 		"after_insert": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
 		"on_update": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
+        "before_validate": [
+            "erpnext_thailand.custom.deposit_utils.validate_invoice",
+            "erpnext_thailand.custom.deposit_utils.apply_deposit_deduction"
+		],
+        "on_cancel": "erpnext_thailand.custom.deposit_utils.cancel_deposit_invoice",        
+        "on_trash": "erpnext_thailand.custom.deposit_utils.cancel_deposit_invoice",
 	},
 	"Expense Claim": {
 		"after_insert": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
@@ -217,7 +208,10 @@ doc_events = {
 	},
     "Address": {
         "on_update": "erpnext_thailand.custom.address.update_tax_info_in_linked_doc"
-    }
+    },
+    "Item": {
+        "validate": "erpnext_thailand.custom.item.validate_deposit_item",
+	}
 }
 
 # Scheduled Tasks
