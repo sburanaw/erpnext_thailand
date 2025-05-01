@@ -328,3 +328,51 @@ frappe.ui.form.on("Payment Entry", {
 	// --------------- END Thai Billing -----------
 
 });
+
+frappe.ui.form.on("Payment Entry Deduction", {
+    amount: function(frm, cdt, cdn) {
+        update_wht_fields(frm, cdt, cdn, "amount");
+    },
+    withholding_tax_base: function(frm, cdt, cdn) {
+        update_wht_fields(frm, cdt, cdn, "base");
+    },
+    withholding_tax_type: function(frm, cdt, cdn) {
+        update_wht_fields(frm, cdt, cdn, "type");
+    }
+});
+
+async function update_wht_fields(frm, cdt, cdn, changeType) {
+    let row = locals[cdt][cdn];
+    if (row.is_updating) return; // Prevent cyclic calls
+    row.is_updating = true;
+
+    let percent = row.withholding_tax_type ? await get_wht_percentage(row.withholding_tax_type) : 0;
+
+    if (changeType === "amount" && percent) {
+        row.withholding_tax_base = row.amount ? row.amount / (percent / 100) : 0;
+    } else if (changeType === "base" && percent) {
+        row.amount = row.withholding_tax_base ? row.withholding_tax_base * (percent / 100) : 0;
+    } else if (changeType === "type" && percent) {
+        row.amount = row.withholding_tax_base ? row.withholding_tax_base * (percent / 100) : 0;
+    }
+
+    frm.refresh_field("deductions"); // Refresh the field to reflect changes
+    row.is_updating = false; // Reset the flag
+}
+
+// Function to get the tax percentage based on tax_type
+async function get_wht_percentage(tax_type) {
+    return new Promise((resolve, reject) => {
+        frappe.db.get_value("Withholding Tax Type", tax_type, "percent", (r) => {
+            if (r && r.percent) {
+                resolve(r.percent);
+            } else {
+                frappe.show_alert({
+                    message: __("Withholding Tax Type not found"),
+                    indicator: "red",
+                });
+                resolve(0); // Default to 0 if not found
+            }
+        });
+    });
+}
