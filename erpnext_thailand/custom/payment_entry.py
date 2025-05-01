@@ -58,16 +58,27 @@ def get_withholding_tax_from_type(filters, doc):
 			credit = gl["credit"]
 			debit = gl["debit"]
 			alloc_percent = ref["allocated_amount"] / ref["total_amount"]
-			report_type = frappe.get_cached_value("Account", gl["account"], "report_type")
+			root_type = frappe.get_cached_value("Account", gl["account"], "root_type")
 			account_type = frappe.get_cached_value("Account", gl["account"], "account_type")
-			if report_type == "Profit and Loss" or \
-				account_type in (
-					"Income Account",
-					"Expense Account",
-					"Fixed Asset",
-					"Asset Received But Not Billed",
-					"Capital Work in Progress",
-					"Temporary"):
+			valid_types = (
+				"Asset Received But Not Billed",
+				"Chargeable",
+				"Capital Work in Progress",
+				"Cost of Goods Sold",
+				"Current Asset",
+				"Direct Expense",
+				"Direct Income",
+				"Expense Account",
+				"Expenses Included In Asset Valuation",
+				"Expenses Included In Valuation",
+				"Fixed Asset",
+				"Income Account",
+				"Indirect Expense",
+				"Indirect Income",
+				"Service Received But Not Billed",
+				"Temporary"
+			)
+			if root_type in ["Asset", "Income", "Expense"] and account_type in valid_types:
 				base_amount += alloc_percent * (credit - debit)
 	if not base_amount:
 		frappe.throw(_("There is nothing to withhold tax for"))
