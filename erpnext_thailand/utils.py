@@ -11,6 +11,15 @@ def amount_in_bahttext(amount):
 	return num2words(amount, to="currency", lang="th")
 
 
+def amount_to_text(amount, currency=None, lang=None):
+    try:
+        currency = currency or frappe.defaults.get_global_default("currency")
+        lang = lang or ("th" if currency == "THB" else "en")
+        return num2words(amount, to="currency", lang=lang, currency=currency).title()
+    except:
+        return ""
+	
+
 def full_thai_date(date_str):
 	if not date_str:
 		return ""
