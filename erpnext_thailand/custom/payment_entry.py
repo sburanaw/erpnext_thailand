@@ -100,7 +100,10 @@ def get_withholding_tax_from_docs_items(doc):
 	result = []
 	wht_types = frappe.get_all(
 		"Withholding Tax Type",
-		fields=["name", "percent", "account"],
+		filters=[
+        	["Withholding Tax Type Account", "company", "=", company.name]
+        ],
+		fields=["name", "percent", "`tabWithholding Tax Type Account`.account"],
 		as_list=True,
 	)
 	wht_rates = frappe._dict({x[0]: {"percent": x[1], "account": x[2]} for x in wht_types})
@@ -136,7 +139,7 @@ def get_withholding_tax_from_docs_items(doc):
 
 
 def get_wht_type(ref_doctype, pay, item):
-	item = frappe.get_doc("Item", item)
+	item = frappe.get_doc("Item", item.item_code)
 	wht_type = None
 	if ref_doctype == "Purchase Invoice":
 		supplier = frappe.get_cached_doc("Supplier", pay.party)
