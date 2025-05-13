@@ -315,7 +315,7 @@ ERP_CUSTOM_FIELDS = {
 		{
 			"fieldname": "section_break_6buh1",
 			"fieldtype": "Section Break",
-			"insert_after": "taxes",
+			"insert_after": "item_tax_section_break",
    			"label": "Thai Tax"
 		},
 		{
