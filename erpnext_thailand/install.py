@@ -4,6 +4,7 @@ from frappe.custom.doctype.custom_field.custom_field import \
     create_custom_fields
 from frappe.custom.doctype.property_setter.property_setter import \
     make_property_setter
+from erpnext_thailand.utils import import_thai_zip_code_data
 
 from erpnext_thailand.constants import (
     ERP_CUSTOM_FIELDS, ERP_PROPERTY_SETTERS,
@@ -17,6 +18,8 @@ def after_install():
 		print("Setting up ERPNext Thailand...")
 		make_custom_fields()
 		make_property_setters()
+		print("Importing Thailand Zip Codes...")
+		import_thai_zip_code_data()
 		click.secho("Thank you for installing ERPNext Thailand!", fg="green")
 	except Exception as e:
 		BUG_REPORT_URL = "https://github.com/ecosoft-frappe/erpnext_thailand/issues/new"

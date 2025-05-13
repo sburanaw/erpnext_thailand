@@ -515,15 +515,10 @@ ERP_PROPERTY_SETTERS = {
 BILLING_CUSTOM_FIELDS =  {
     "Payment Entry": [
         {
-            "fieldname": "column_break_42",
-            "fieldtype": "Column Break",
-            "insert_after": "get_outstanding_orders",
-        },
-        {
             "depends_on": 'eval:doc.docstatus == 0 && doc.payment_type == "Receive" && doc.party_type == "Customer" && doc.party',
             "fieldname": "get_invoices_from_sales_billing",
             "fieldtype": "Button",
-            "insert_after": "column_break_42",
+            "insert_after": "get_outstanding_invoices",
             "label": "Get Invoices from Sales Billing",
         },
         {
@@ -536,15 +531,10 @@ BILLING_CUSTOM_FIELDS =  {
             "options": "Sales Billing",
         },
         {
-            "fieldname": "section_break_44",
-            "fieldtype": "Section Break",
-            "insert_after": "sales_billing",
-        },
-        {
             "depends_on": 'eval:doc.docstatus == 0 && doc.payment_type == "Pay" && doc.party_type == "Supplier" && doc.party',
             "fieldname": "get_invoices_from_purchase_billing",
             "fieldtype": "Button",
-            "insert_after": "column_break_42",
+            "insert_after": "sales_billing",
             "label": "Get Invoices from Purchase Billing",
         },
         {
@@ -555,12 +545,7 @@ BILLING_CUSTOM_FIELDS =  {
             "insert_after": "get_invoices_from_purchase_billing",
             "label": "Purchase Billing",
             "options": "Purchase Billing",
-        },
-        {
-            "fieldname": "section_break_44",
-            "fieldtype": "Section Break",
-            "insert_after": "purchase_billing",
-        },
+        }
     ],
 }
 
