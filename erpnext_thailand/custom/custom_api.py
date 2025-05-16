@@ -432,6 +432,7 @@ def prepare_journal_entry_tax_invoice_detail(doc, method):
 	if reset_tax:
 		for d in doc.tax_invoice_details:
 			d.delete()
+		tinv_idx = 1
 		for tax_line in filter(lambda l: l.account in tax_accounts, doc.accounts):
 			tax_rate = frappe.get_cached_value("Account", tax_line.account, "tax_rate")
 			tax_amount = abs(tax_line.debit - tax_line.credit)
@@ -453,6 +454,7 @@ def prepare_journal_entry_tax_invoice_detail(doc, method):
 					"parenttype": "Journal Entry",
 					"parentfield": "tax_invoice_details",
 					"parent": doc.name,
+					"idx": tinv_idx,
 					"company_tax_address": company_tax_address,
 					"supplier": tax_line.supplier,
 					"customer": tax_line.customer,
@@ -465,6 +467,7 @@ def prepare_journal_entry_tax_invoice_detail(doc, method):
 			)
 			tax_line.reference_detail_no = tinv_detail.insert().name
 			tax_line.save()
+			tinv_idx += 1
 		doc.reload()
 
 
