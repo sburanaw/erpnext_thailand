@@ -272,15 +272,43 @@ ERP_CUSTOM_FIELDS = {
 			"label": "Tax Invoice",
 		},
 		{
+			"fieldname": "section_break_split_tax_invoice",
+			"fieldtype": "Section Break",
+			"insert_after": "tax_invoice",
+   			"label": ""
+		},
+		{
+			"fieldname": "split_tax_invoice",
+			"fieldtype": "Check",
+			"insert_after": "section_break_split_tax_invoice",
+			"label": "Split Tax Invoices",
+			"no_copy": 1,
+		},
+		{
+			"fieldname": "splitted_tax_invoices",
+			"fieldtype": "Table",
+			"insert_after": "split_tax_invoice",
+			"label": "Splitted Tax Invoices",
+			"options": "Purchase Invoice Tax Invoice Detail",
+			"depends_on": "eval:doc.split_tax_invoice",
+		},
+		{
+			"fieldname": "section_break_tax_invoice",
+			"fieldtype": "Section Break",
+			"insert_after": "splitted_tax_invoices",
+   			"label": ""
+		},
+		{
 			"allow_on_submit": 1,
 			"fieldname": "tax_invoice_number",
 			"fieldtype": "Data",
 			"in_list_view": 1,
 			"in_standard_filter": 1,
-			"insert_after": "tax_invoice",
+			"insert_after": "section_break_tax_invoice",
 			"label": "Tax Invoice Number",
 			"no_copy": 1,
 			"read_only_depends_on": "eval:doc.docstatus!=0",
+			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 		{
 			"description": "Use this field only when you want to overwrite",
@@ -295,6 +323,7 @@ ERP_CUSTOM_FIELDS = {
 			"fieldname": "column_break_t0qgt",
 			"fieldtype": "Column Break",
 			"insert_after": "tax_invoice_number",
+			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 		{
 			"allow_on_submit": 1,
@@ -304,6 +333,7 @@ ERP_CUSTOM_FIELDS = {
 			"label": "Tax Invoice Date",
 			"no_copy": 1,
 			"read_only_depends_on": "eval:doc.docstatus!=0",
+			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 	],
  	"Purchase Invoice Item": [
@@ -324,7 +354,7 @@ ERP_CUSTOM_FIELDS = {
 		{
 			"fieldname": "section_break_6buh1",
 			"fieldtype": "Section Break",
-			"insert_after": "taxes",
+			"insert_after": "item_tax_section_break",
    			"label": "Thai Tax"
 		},
 		{
@@ -447,11 +477,34 @@ HRMS_CUSTOM_FIELDS = {
 			"label": "Base Amount Overwrite",
 			"no_copy": 1,
 			"options": "Company:company:default_currency",
+			"depends_on": "eval:!doc.split_tax_invoice",
+		},
+		{
+			"fieldname": "section_break_split_tax_invoice",
+			"fieldtype": "Section Break",
+			"insert_after": "base_amount_overwrite",
+   			"label": ""
+		},
+		{
+			"fieldname": "split_tax_invoice",
+			"fieldtype": "Check",
+			"insert_after": "section_break_split_tax_invoice",
+			"label": "Split Tax Invoices",
+			"no_copy": 1,
+		},
+		{
+			"fieldname": "splitted_tax_invoices",
+			"fieldtype": "Table",
+			"insert_after": "split_tax_invoice",
+			"label": "Splitted Tax Invoices",
+			"options": "Expense Claim Tax Invoice Detail",
+			"depends_on": "eval:doc.split_tax_invoice",
 		},
 		{
 			"fieldname": "section_break_uodhb",
 			"fieldtype": "Section Break",
-			"insert_after": "base_amount_overwrite",
+			"insert_after": "splitted_tax_invoices",
+			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 		{
 			"allow_on_submit": 1,
@@ -461,6 +514,7 @@ HRMS_CUSTOM_FIELDS = {
 			"insert_after": "section_break_uodhb",
 			"label": "Tax Invoice Number",
 			"read_only_depends_on": "eval:doc.docstatus!=0",
+			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 		{
 			"allow_on_submit": 1,
@@ -470,11 +524,13 @@ HRMS_CUSTOM_FIELDS = {
 			"label": "Supplier",
 			"no_copy": 1,
 			"options": "Supplier",
+			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 		{
 			"fieldname": "column_break_6atpw",
 			"fieldtype": "Column Break",
 			"insert_after": "supplier",
+			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 		{
 			"allow_on_submit": 1,
@@ -484,6 +540,7 @@ HRMS_CUSTOM_FIELDS = {
 			"label": "Tax Invoice Date",
 			"no_copy": 1,
 			"read_only_depends_on": "eval:doc.docstatus!=0",
+			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 		{
 			"allow_on_submit": 1,
@@ -493,6 +550,7 @@ HRMS_CUSTOM_FIELDS = {
 			"insert_after": "tax_invoice_date",
 			"label": "Supplier Name",
 			"no_copy": 1,
+			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 	],
 }
@@ -524,15 +582,10 @@ ERP_PROPERTY_SETTERS = {
 BILLING_CUSTOM_FIELDS =  {
     "Payment Entry": [
         {
-            "fieldname": "column_break_42",
-            "fieldtype": "Column Break",
-            "insert_after": "get_outstanding_orders",
-        },
-        {
             "depends_on": 'eval:doc.docstatus == 0 && doc.payment_type == "Receive" && doc.party_type == "Customer" && doc.party',
             "fieldname": "get_invoices_from_sales_billing",
             "fieldtype": "Button",
-            "insert_after": "column_break_42",
+            "insert_after": "get_outstanding_invoices",
             "label": "Get Invoices from Sales Billing",
         },
         {
@@ -545,15 +598,10 @@ BILLING_CUSTOM_FIELDS =  {
             "options": "Sales Billing",
         },
         {
-            "fieldname": "section_break_44",
-            "fieldtype": "Section Break",
-            "insert_after": "sales_billing",
-        },
-        {
             "depends_on": 'eval:doc.docstatus == 0 && doc.payment_type == "Pay" && doc.party_type == "Supplier" && doc.party',
             "fieldname": "get_invoices_from_purchase_billing",
             "fieldtype": "Button",
-            "insert_after": "column_break_42",
+            "insert_after": "sales_billing",
             "label": "Get Invoices from Purchase Billing",
         },
         {
@@ -564,12 +612,7 @@ BILLING_CUSTOM_FIELDS =  {
             "insert_after": "get_invoices_from_purchase_billing",
             "label": "Purchase Billing",
             "options": "Purchase Billing",
-        },
-        {
-            "fieldname": "section_break_44",
-            "fieldtype": "Section Break",
-            "insert_after": "purchase_billing",
-        },
+        }
     ],
 }
 
@@ -671,12 +714,12 @@ DEPOSIT_CUSTOM_FIELDS =  {
 	],
     "Sales Invoice": [
 		{
-			"depends_on": "eval:doc.is_deposit_invoice",
+			"depends_on": "",
 			"fieldname": "is_deposit_invoice",
 			"fieldtype": "Check",
 			"insert_after": "company_tax_id",
 			"label": "Is Deposit Invoice",
-			"read_only": 1
+			"read_only": 0
 		},
 		{
 			"collapsible": 1,
@@ -688,11 +731,19 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"label": "Deposit Deductions"
 		},
 		{
-			"fieldname": "manual_deposit_allocation",
+			"fieldname": "use_untied_deposit",
 			"fieldtype": "Check",
 			"insert_after": "deposit_deductions",
+			"label": "Include Untied Deposits",
+			"description": "Untied Deposits are deposits that are not linked to any order.",
+		},
+		{
+			"fieldname": "manual_deposit_allocation",
+			"fieldtype": "Check",
+			"insert_after": "use_untied_deposit",
 			"label": "Manual Deposit Allocation",
 			"read_only": 0,
+			"description": "Allow user to manually allowcate deposit amount to deduct.",
 		},
 		{
 			"fieldname": "deposits",
@@ -715,12 +766,12 @@ DEPOSIT_CUSTOM_FIELDS =  {
 	],
     "Purchase Invoice": [
 		{
-			"depends_on": "eval:doc.is_deposit_invoice",
+			"depends_on": "",
 			"fieldname": "is_deposit_invoice",
 			"fieldtype": "Check",
 			"insert_after": "company",
 			"label": "Is Deposit Invoice",
-			"read_only": 1
+			"read_only": 0
 		},
 		{
 			"collapsible": 1,
@@ -732,11 +783,19 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"label": "Deposit Deductions"
 		},
 		{
-			"fieldname": "manual_deposit_allocation",
+			"fieldname": "use_untied_deposit",
 			"fieldtype": "Check",
 			"insert_after": "deposit_deductions",
+			"label": "Include Untied Deposits",
+			"description": "Untied Deposits are deposits that are not linked to any order.",
+		},
+		{
+			"fieldname": "manual_deposit_allocation",
+			"fieldtype": "Check",
+			"insert_after": "use_untied_deposit",
 			"label": "Manual Deposit Allocation",
 			"read_only": 0,
+			"description": "Allow user to manually allowcate deposit amount to deduct.",
 		},
 		{
 			"fieldname": "deposits",
