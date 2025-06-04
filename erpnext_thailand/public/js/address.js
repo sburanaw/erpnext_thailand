@@ -147,6 +147,7 @@ function open_type_selection_dialog(frm) {
 	dialog.fields_dict.type.$input.on("change", () => {
 		const selected_type = dialog.get_value("type");
 		dialog.set_df_property("customer_supplier", "options", selected_type);
+		dialog.set_value("customer_supplier", ""); // Clear customer_supplier value
 	});
 
 	dialog.show();
@@ -172,10 +173,18 @@ function fetch_partner_locations(customer_supplier, type, frm) {
 }
 
 function open_location_selection_dialog(locations, frm) {
-	const options = locations.map(
-		(loc) =>
-			`${loc.address_line1}, ${loc.address_line2}, ${loc.city}, ${loc.county}, ${loc.state}, ${loc.country}, ${loc.pincode}`
-	);
+	const options = locations.map((loc) => {
+		const parts = [
+			loc.address_line1,
+			loc.address_line2,
+			loc.city,
+			loc.county,
+			loc.state,
+			loc.country,
+			loc.pincode,
+		].filter((part) => part && part.trim() !== ""); // Filter out null or empty values
+		return parts.join(", ");
+	});
 
 	const dialog = new frappe.ui.Dialog({
 		title: __("Select Data"),
@@ -191,11 +200,18 @@ function open_location_selection_dialog(locations, frm) {
 		primary_action_label: __("Submit"),
 		primary_action(data) {
 			dialog.hide();
-			const selected = locations.find(
-				(loc) =>
-					`${loc.address_line1}, ${loc.address_line2}, ${loc.city}, ${loc.county}, ${loc.state}, ${loc.country}, ${loc.pincode}` ===
-					data.selected_option
-			);
+			const selected = locations.find((loc) => {
+				const parts = [
+					loc.address_line1,
+					loc.address_line2,
+					loc.city,
+					loc.county,
+					loc.state,
+					loc.country,
+					loc.pincode,
+				].filter((part) => part && part.trim() !== ""); // Filter out null or empty values
+				return parts.join(", ") === data.selected_option;
+			});
 			if (selected) apply_location_to_form(selected, frm);
 		},
 	});
