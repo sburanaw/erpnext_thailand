@@ -76,6 +76,7 @@ def get_withholding_tax_from_type(filters, doc):
 				"Indirect Expense",
 				"Indirect Income",
 				"Service Received But Not Billed",
+				"Stock Received But Not Billed",
 				"Temporary"
 			)
 			if root_type in ["Asset", "Income", "Expense"] and account_type in valid_types:
