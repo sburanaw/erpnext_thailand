@@ -16,4 +16,3 @@ erpnext_thailand.patches.add_deposit_custom_fields
 erpnext_thailand.patches.rerun_deposit_custom_fields
 erpnext_thailand.patches.rerun_purchase_invoice_custom_fields
 erpnext_thailand.patches.rerun_expense_claim_custom_fields
-erpnext_thailand.patches.rename_exchange_client_id_to_token

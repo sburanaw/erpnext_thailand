@@ -14,7 +14,7 @@ class CurrencyExchangeSettings(CurrencyExchangeSettings):
 				params[row.key] = row.value.format(
 					transaction_date=nowdate(), to_currency="THB", from_currency="USD"
 				)
-			params["token"] = self.token
+			params["client_id"] = self.client_id
 			api_url = self.api_endpoint.format(
 				transaction_date=nowdate(), to_currency="THB", from_currency="USD")
 			try:
