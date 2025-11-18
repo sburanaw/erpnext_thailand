@@ -148,7 +148,6 @@ before_app_uninstall = "erpnext_thailand.uninstall.before_app_uninstall"
 # ---------------
 # Override standard doctype classes
 override_doctype_class = {
-	"Employee Advance": "erpnext_thailand.custom.employee_advance.ThaiTaxEmployeeAdvance",
 	"Currency Exchange Settings": "erpnext_thailand.custom.currency_exchange_settings.CurrencyExchangeSettings",
 }
 
