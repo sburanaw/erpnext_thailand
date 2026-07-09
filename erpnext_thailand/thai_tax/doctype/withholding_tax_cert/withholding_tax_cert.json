@@ -16,6 +16,10 @@
   "supplier_name",
   "supplier_tax_id",
   "supplier_address",
+  "column_break_is_agent",
+  "is_agent",
+  "withholding_agent_for",
+  "withholding_agent_for_name",
   "section_break_6",
   "income_tax_form",
   "tax_payer",
@@ -89,6 +93,36 @@
    "label": "Supplier Address",
    "options": "Address",
    "reqd": 1
+  },
+  {
+   "fieldname": "column_break_is_agent",
+   "fieldtype": "Column Break"
+  },
+  {
+    "fieldname": "is_agent",
+    "label": "Is Agent",
+    "fieldtype": "Check",
+    "insert_after": "column_break_is_agent",
+    "default": "0",
+    "description": "มีผู้กระทำการแทน"
+  },
+  {
+    "fieldname": "withholding_agent_for",
+    "fieldtype": "Link",
+    "options": "Supplier",
+    "label": "Withholding Agent For",
+    "insert_after": "is_agent",
+    "depends_on": "eval:doc.is_agent",
+    "description": "กระทำการแทน"
+  },
+  {
+    "fetch_from": "withholding_agent_for.supplier_name",
+    "fieldname": "withholding_agent_for_name",
+    "fieldtype": "Data",
+    "label": "Withholding Agent For Name",
+    "insert_after": "withholding_agent_for",
+    "depends_on": "eval:doc.is_agent",
+    "read_only": 1
   },
   {
    "fieldname": "section_break_6",
