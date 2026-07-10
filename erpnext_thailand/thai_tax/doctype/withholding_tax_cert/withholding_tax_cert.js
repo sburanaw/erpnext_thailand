@@ -29,13 +29,22 @@ frappe.ui.form.on("Withholding Tax Cert", {
 			};
 		});
 	},
+	is_agent(frm) {
+		if (!frm.doc.is_agent) {
+			frm.set_value("withholding_agent_for", "");
+		}
+	},
 });
-
 
 frappe.ui.form.on("Withholding Tax Items", {
 	// Helper to calculate tax amount from given rate
 	tax_rate: function (frm, cdt, cdn) {
 		var row = locals[cdt][cdn];
-		frappe.model.set_value(cdt, cdn, "tax_amount", flt((row.tax_base * row.tax_rate) / 100, precision("tax_amount", row)));
+		frappe.model.set_value(
+			cdt,
+			cdn,
+			"tax_amount",
+			flt((row.tax_base * row.tax_rate) / 100, precision("tax_amount", row))
+		);
 	},
 });
