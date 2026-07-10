@@ -111,7 +111,8 @@
     "options": "Supplier",
     "label": "Withholding Agent For",
     "insert_after": "is_agent",
-    "depends_on": "eval:doc.is_agent"
+    "depends_on": "eval:doc.is_agent",
+    "mandatory_depends_on": "eval:doc.is_agent"
   },
   {
     "fetch_from": "withholding_agent_for.supplier_name",
