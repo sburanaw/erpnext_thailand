@@ -11,6 +11,23 @@ RATE_TYPE_FIELD_MAP = {
 }
 
 
+def clear_exchange_rate_cache(doc, method=None):
+	if not doc.has_value_changed("bot_currency_rate_type"):
+		return
+
+	currency = doc.name
+	suffix = f":{currency}".encode()
+	middle = f":{currency}:".encode()
+	cache = frappe.cache()
+	stale_keys = [
+		key
+		for key in cache.keys("currency_exchange_rate_*")
+		if key.endswith(suffix) or middle in key
+	]
+	if stale_keys:
+		cache.delete(*stale_keys)
+		
+
 @frappe.whitelist(allow_guest=True)
 def get_api_currency_exchange(
 	from_currency, to_currency, transaction_date, token=None):

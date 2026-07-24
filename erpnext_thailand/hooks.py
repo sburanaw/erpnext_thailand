@@ -216,7 +216,10 @@ doc_events = {
     },
     "Item": {
         "validate": "erpnext_thailand.custom.item.validate_deposit_item",
-	}
+	},
+    "Currency": {
+        "on_update": "erpnext_thailand.custom.currency_exchange_bot_api.clear_exchange_rate_cache",
+    }
 }
 
 # Scheduled Tasks
