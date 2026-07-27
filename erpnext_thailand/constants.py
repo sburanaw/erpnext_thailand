@@ -667,6 +667,9 @@ ERP_PROPERTY_SETTERS = {
 	"Currency Exchange Settings": [
 		("service_provider", "options", "frankfurter.dev\nexchangerate.host\nBank of Thailand\nCustom", "Select"),
 	],
+	"Withholding Tax Items": [
+		("tax_rate", "precision", "2", "Select"),
+	],
 }
 
 BILLING_CUSTOM_FIELDS =  {

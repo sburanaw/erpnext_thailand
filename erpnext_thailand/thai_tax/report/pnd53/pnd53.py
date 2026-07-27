@@ -89,8 +89,8 @@ def get_columns():
 		},
 		{
 			"label": _("Tax Rate"),
-			"fieldname": "tax_rate",
-			"fieldtype": "Int",
+			"fieldtype": "Float",
+			"precision": 2,
 			"width": 0,
 		},
 		{
