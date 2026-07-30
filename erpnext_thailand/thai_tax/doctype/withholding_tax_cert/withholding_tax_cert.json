@@ -138,7 +138,7 @@
    "fieldname": "tax_payer",
    "fieldtype": "Select",
    "label": "Tax Payer",
-   "options": "Withholding\nPaid One Time",
+   "options": "Withholding\nPaid One Time\nPaid Continuously",
    "reqd": 1
   },
   {
