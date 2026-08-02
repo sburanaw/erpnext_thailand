@@ -82,12 +82,16 @@ def create_tax_invoice_on_gl_tax(doc, method):
 			# Validate base amount
 			tax_rate = frappe.get_cached_value("Account", doc.account, "tax_rate")
 			if abs((base_amount * tax_rate / 100) - tax_amount) > 0.2:
-				frappe.throw(
-					_(
-         				"Tax should be {}% of the base amount<br/>"
-					  	"<b>Note:</b> To correct base amount, fill in Tax Base Amount.".format(tax_rate)
+				if voucher.doctype not in ["Sales Invoice", "Purchase Invoice"]:
+					frappe.throw(
+						_(
+							"Tax should be {}% of the base amount<br/>"
+							"<b>Note:</b> To correct base amount, fill in Tax Base Amount.".format(tax_rate)
+						)
 					)
-				)
+				else:
+					# Overwrite base amount for case of separated tax percent in sales/purchase invoice
+					base_amount = sum([tax.net_amount for tax in voucher.taxes if tax.account_head == doc.account])
 			if voucher.get("split_tax_invoice", False):
 				# Use Split Tax Invoice Table
 				tinvs = create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher, True)
