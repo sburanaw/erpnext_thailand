@@ -346,7 +346,7 @@ ERP_CUSTOM_FIELDS = {
  	"Purchase Invoice Item": [
 		{
 			"description": "Default Withholding Tax Type setup on Item",
-			"fetch_from": "item_code.withholding_tax_type",
+			"fetch_from": "item_code.withholding_tax_type_pay_supplier",
 			"fetch_if_empty": 1,
 			"fieldname": "withholding_tax_type",
 			"fieldtype": "Link",
@@ -479,6 +479,22 @@ ERP_CUSTOM_FIELDS = {
 			"label": "Token",
 			"mandatory_depends_on": "eval:doc.service_provider == 'Bank of Thailand';",
 			"module": "Thai Tax"
+		},
+	],
+    "Currency": [
+		{
+			"fieldname": "bot_currency",
+			"fieldtype": "Data",
+			"insert_after": "fraction_value",
+			"label": "BOT Currency",
+		},
+		{
+			"fieldname": "bot_currency_rate_type",
+			"fieldtype": "Select",
+			"insert_after": "bot_currency",
+			"label": "BOT Currency Rate Type",
+			"options": "\nMid Rate\nSelling Rate\nBuying Sight Rate\nBuying Transfer Rate",
+			"default": "Selling Rate",
 		},
 	],
 	"Account": [
@@ -762,10 +778,16 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"fieldtype": "Column Break",
 			"insert_after": "deposit_invoice"
 		},
+        {
+			"fieldname": "deposit_amount",
+			"fieldtype": "Currency",
+			"insert_after": "column_break_euapx",
+			"label": "Deposit Amount",
+		},
 		{
 			"fieldname": "percent_deposit",
 			"fieldtype": "Percent",
-			"insert_after": "column_break_euapx",
+			"insert_after": "deposit_amount",
 			"label": "Percent Deposit",
 		},
 		{
@@ -805,10 +827,16 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"fieldtype": "Column Break",
 			"insert_after": "deposit_invoice"
 		},
+        {
+			"fieldname": "deposit_amount",
+			"fieldtype": "Currency",
+			"insert_after": "column_break_euapx",
+			"label": "Deposit Amount",
+		},
 		{
 			"fieldname": "percent_deposit",
 			"fieldtype": "Percent",
-			"insert_after": "column_break_euapx",
+			"insert_after": "deposit_amount",
 			"label": "Percent Deposit",
 		},
 		{
@@ -825,7 +853,7 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"depends_on": "",
 			"fieldname": "is_deposit_invoice",
 			"fieldtype": "Check",
-			"insert_after": "company_tax_id",
+			"insert_after": "is_consolidated",
 			"label": "Is Deposit Invoice",
 			"read_only": 0
 		},
@@ -877,7 +905,7 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"depends_on": "",
 			"fieldname": "is_deposit_invoice",
 			"fieldtype": "Check",
-			"insert_after": "company",
+			"insert_after": "is_paid",
 			"label": "Is Deposit Invoice",
 			"read_only": 0
 		},
