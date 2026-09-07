@@ -102,8 +102,8 @@ def get_columns():
 		},
 		{
 			"label": _("Tax Rate"),
-			"fieldname": "tax_rate",
-			"fieldtype": "Int",
+			"fieldtype": "Float",
+			"precision": 2,
 			"width": 0,
 		},
 		{
@@ -195,6 +195,7 @@ def get_data(filters):
 			round(wht_items.tax_amount, 2).as_("tax_amount"),
 			Case()
 			.when(wht_cert.tax_payer == "Withholding", "1")
+			.when(wht_cert.tax_payer == "Paid Continuously", "2")
 			.when(wht_cert.tax_payer == "Paid One Time", "3")
 			.else_(wht_cert.tax_payer)
 			.as_("tax_payer"),

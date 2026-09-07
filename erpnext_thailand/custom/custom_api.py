@@ -81,13 +81,17 @@ def create_tax_invoice_on_gl_tax(doc, method):
 			base_amount = abs(base_amount) * sign
 			# Validate base amount
 			tax_rate = frappe.get_cached_value("Account", doc.account, "tax_rate")
-			if abs((base_amount * tax_rate / 100) - tax_amount) > 0.1:
-				frappe.throw(
-					_(
-         				"Tax should be {}% of the base amount<br/>"
-					  	"<b>Note:</b> To correct base amount, fill in Tax Base Amount.".format(tax_rate)
+			if abs((base_amount * tax_rate / 100) - tax_amount) > 0.2:
+				if voucher.doctype not in ["Sales Invoice", "Purchase Invoice"]:
+					frappe.throw(
+						_(
+							"Tax should be {}% of the base amount<br/>"
+							"<b>Note:</b> To correct base amount, fill in Tax Base Amount.".format(tax_rate)
+						)
 					)
-				)
+				else:
+					# Overwrite base amount for case of separated tax percent in sales/purchase invoice
+					base_amount = sum([tax.net_amount for tax in voucher.taxes if tax.account_head == doc.account])
 			if voucher.get("split_tax_invoice", False):
 				# Use Split Tax Invoice Table
 				tinvs = create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher, True)
@@ -224,9 +228,18 @@ def update_voucher_tinv(doctype, voucher, tinv, split_tax_invoice=False):
 	# Sales Invoice - use Sales Tax Invoice as Tax Invoice
 	# Purchase Invoice - use Bill No as Tax Invoice
 	if doctype == "Sales Tax Invoice":
-		voucher.tax_invoice_number = tinv.name
-		voucher.tax_invoice_date = tinv.date
-		tinv.report_date = tinv.date
+		setting = get_thai_tax_settings(voucher.company)
+		if setting.create_sales_taxinv_on_zero_tax and setting.get("manual_keyin_sales_taxinv_on_zero_tax") and tinv.tax_amount == 0:
+			# Manual mode: behave like Purchase Tax Invoice — use user-provided number and date
+			if not (voucher.tax_invoice_number and voucher.tax_invoice_date):
+				frappe.throw(_("Please enter Tax Invoice Number / Tax Invoice Date"))
+			tinv.number = voucher.tax_invoice_number
+			tinv.report_date = tinv.date = voucher.tax_invoice_date
+		else:
+			# Auto mode (default): derive number and date from generated Tax Invoice
+			voucher.tax_invoice_number = tinv.name
+			voucher.tax_invoice_date = tinv.date
+			tinv.report_date = tinv.date
 	if doctype == "Purchase Tax Invoice":
 		if not (voucher.tax_invoice_number and voucher.tax_invoice_date):
 			frappe.throw(_("Please enter Tax Invoice Number / Tax Invoice Date"))
@@ -269,6 +282,21 @@ def validate_tax_invoice(doc, method):
 			frappe.throw(_("This document require Tax Invoice Number(s)"))
 		if not has_vat and doc.splitted_tax_invoices:
 			frappe.throw(_("This document has no due VAT, please remove Tax Invoice Number(s)"))
+
+
+def validate_sales_tax_invoice_zero_tax(doc, method):
+	"""When manual key-in is enabled, require Tax Invoice Number/Date on zero-tax Sales Invoices."""
+	setting = get_thai_tax_settings(doc.company)
+	if not (setting.create_sales_taxinv_on_zero_tax and setting.get("manual_keyin_sales_taxinv_on_zero_tax")):
+		return
+	zero_taxes = [t for t in doc.taxes if (
+		t.account_head == setting.sales_tax_account and t.tax_amount == 0
+	)]
+	if zero_taxes:
+		if not doc.tax_invoice_number:
+			frappe.throw(_("This document requires Tax Invoice Number"))
+		if not doc.tax_invoice_date:
+			frappe.throw(_("This document requires Tax Invoice Date"))
 
 
 @frappe.whitelist()
@@ -351,6 +379,8 @@ def make_clear_vat_journal_entry(dt, dn):
 
 
 def clear_invoice_undue_tax(doc, method):
+	if frappe.flags.get("in_clear_invoice_undue_tax"):
+		return
 	old_doc = doc.get_doc_before_save()
 	if (
 		old_doc
@@ -423,7 +453,11 @@ def clear_invoice_undue_tax(doc, method):
 	)
 	doc.tax_base_amount = base_total
 	doc.calculate_taxes()
-	doc.save()
+	frappe.flags.in_clear_invoice_undue_tax = True
+	try:
+		doc.save()
+	finally:
+		frappe.flags.in_clear_invoice_undue_tax = False
 
 
 def get_undue_tax(doc, ref, gl, tax):

@@ -6,7 +6,7 @@ app_publisher = "Ecosoft"
 app_description = "Thailand Localization"
 app_email = "kittiu@ecosoft.co.th"
 app_license = "MIT"
-required_apps = ["erpnext", "hrms"]
+required_apps = ["erpnext"]
 
 
 naming_series_variables = {
@@ -180,6 +180,7 @@ doc_events = {
         "on_submit": "erpnext_thailand.custom.unreconcile_payment.unreconcile_undue_tax",
 	},
     "Sales Invoice": {
+        "validate": "erpnext_thailand.custom.custom_api.validate_sales_tax_invoice_zero_tax",
         "on_submit": "erpnext_thailand.custom.custom_api.create_sales_tax_invoice_on_zero_tax",
 		"before_cancel": "erpnext_thailand.custom.custom_api.cancel_related_tax_invoice",
         "before_validate": [
@@ -216,7 +217,10 @@ doc_events = {
     },
     "Item": {
         "validate": "erpnext_thailand.custom.item.validate_deposit_item",
-	}
+	},
+    "Currency": {
+        "on_update": "erpnext_thailand.custom.currency_exchange_bot_api.clear_exchange_rate_cache",
+    }
 }
 
 # Scheduled Tasks

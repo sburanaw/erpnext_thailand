@@ -45,7 +45,7 @@
    "fieldtype": "Percent",
    "in_list_view": 1,
    "label": "Tax Rate",
-   "precision": "0"
+   "precision": "2"
   },
   {
    "columns": 1,
